@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html data-ng-app="pelias">
+  <head>
+    <title>Pelias Demo</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <!--[if lte IE 8]>
+      <link href="css/leaflet.ie.css" rel="stylesheet" type="text/css" >
+    <![endif]-->
+    <link rel="stylesheet" href="css/demo.css" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.3/angular.min.js"></script>
+    <script type="text/javascript" src="js/leaflet.js"></script>
+    <script type="text/javascript" src="js/leaflet-hash.js"></script>
+    <script type="text/javascript" src="js/demo.js"></script>
+  </head>
+  <body>
+      <div id="map"></div>
+
+      <section id="searchbar" data-ng-controller="SearchController">
+        <form role="search">
+          <div class="input">
+            <input type="text" data-ng-model="search" class="form-control" ng-keydown="keyPressed($event)" placeholder="Search" />
+          </div>
+        </form>
+
+        <ul id="results">
+          <li data-ng-repeat="result in results">
+            <a data-ng-click="selectResult(result)">
+              <i class="glyphicon glyphicon-{{result.icon}}"></i>
+              <span data-ng-bind-html="result.htmltext"></span>
+            </a>
+          </li>
+        </ul>
+      </section>
+
+  </body>
+</html>
