@@ -43,6 +43,14 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     }
   });
 
+  map.on('click', function(e) {
+    var geo = {
+      'lat': e.latlng.lat,
+      'lon': e.latlng.lng
+    };
+    reverse(geo);
+  });
+
   var highlight = function( text, focus ){
     var r = RegExp( '('+ focus + ')', 'gi' );
     return text.replace( r, '<strong>$1</strong>' );
@@ -80,6 +88,26 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     return distance.toFixed( distance < 1 ? 2 : 0 );
   }
 
+  var reverse = function(geo) {
+    $http({
+      url: $scope.api_url+'/reverse',
+      method: 'GET',
+      params: {
+        lat: geo.lat,
+        lon: geo.lon,
+        zoom:$rootScope.geobase ? $rootScope.geobase.zoom : 12
+      }, 
+      headers: { 'Accept': 'application/json' }
+    }).success(function (data, status, headers, config) {
+      if (data) {
+        var geo = data.features[0].geometry.coordinates;
+        var txt = data.features[0].properties.text;
+        $rootScope.$emit( 'map.setView', geo.reverse(), $rootScope.geobase.zoom );
+        $rootScope.$emit( 'map.dropMarker', geo, txt);
+      } else { }
+    })
+  };
+  
   var getResults = function(url, resultkey) {
     $http({
       url: $scope.api_url+url,
