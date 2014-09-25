@@ -25,9 +25,22 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
   // Set up the hash
   var hash = new L.Hash(map);
+  var marker;
 
   $rootScope.$on( 'map.setView', function( ev, geo, zoom ){
     map.setView( geo, zoom || 8 );
+  });
+
+  $rootScope.$on( 'map.dropMarker', function( ev, geo, text ){
+    marker = new L.marker(geo).bindPopup(text);
+    map.addLayer(marker);
+    marker.openPopup();
+  });
+
+  $rootScope.$on( 'map.removeAllMarkers', function( ev, geo, text ){
+    if (marker) {
+      map.removeLayer(marker);
+    }
   });
 
   var highlight = function( text, focus ){
@@ -46,102 +59,122 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       return 'tower';
     } else if( type.match('neighborhood') ){
       return 'home';
+    } else if( type.match('search') ){
+      return 'search';
     }
     return 'map-marker';
   };
 
+  var resultSelected = function(search, geo) {
+    $rootScope.$emit( 'map.removeAllMarkers' );
+    $scope.search = search;
+    $rootScope.$emit( 'map.setView', geo.reverse(), $rootScope.geobase.zoom );
+    $rootScope.$emit( 'map.dropMarker', geo, search);
+    $rootScope.$emit( 'hidesuggest' );
+    $rootScope.$emit( 'hidesearch' );
+  };
+
+  var computeDistance = function(geo) {
+    var p1 = new LatLon( $rootScope.geobase.lat, $rootScope.geobase.lon );
+    var p2 = new LatLon( geo[1], geo[0] );
+    var distance = Number( p1.distanceTo(p2) );
+    return distance.toFixed( distance < 1 ? 2 : 0 );
+  }
+
+  var getResults = function(url, resultkey, successCallback) {
+    $http({
+      url: $scope.api_url+url,
+      method: 'GET',
+      params: {      
+        input: $scope.search,
+        // datasets: $scope.queryDatasets.join(','),
+        lat: $rootScope.geobase ? $rootScope.geobase.lat : 0,
+        lon: $rootScope.geobase ? $rootScope.geobase.lon : 0,
+        zoom:$rootScope.geobase ? $rootScope.geobase.zoom : 12,
+        size: 10
+      },
+      headers: { 'Accept': 'application/json' }
+    }).success(function (data, status, headers, config) {
+      if( data ){
+        successCallback(data);
+      }
+      else {
+        $scope[resultkey] = [];
+      }
+    }).error(function (data, status, headers, config) {
+      $scope[resultkey] = [];
+    });
+  };
+
   $scope.search = '';
-  $scope.results = [];
-  $scope.currentText = '';
-  $scope.lastSuggest = 0;
-  $scope.lastSearch = 0;
+  $scope.searchresults = [];
+  $scope.suggestresults = [];
   $scope.api_url = 'http://localhost:3100';
 
   $scope.selectResult = function( result ){
-    $scope.currentText = result.properties.text;
-    $scope.search = result.properties.text;
-    $rootScope.$emit( 'map.setView', result.geometry.coordinates.reverse(), $rootScope.geobase.zoom );
-    $rootScope.$emit( 'hidesuggest' );
+    resultSelected(result.properties.text, result.geometry.coordinates)
   }
 
+  $scope.selectSearchResult = function( result ){
+    resultSelected(result.properties.suggest.output, result.geometry.coordinates)
+  }
+
+  $rootScope.$on( 'hideall', function( ev ){
+    $scope.suggestresults = [];
+    $scope.searchresults = []
+  });
+
   $rootScope.$on( 'hidesuggest', function( ev ){
-    $scope.results = [];
+    $scope.suggestresults = [];
+  });
+
+  $rootScope.$on( 'hidesearch', function( ev ){
+    $scope.searchresults = [];
   });
 
   $scope.keyPressed = function(ev) {
     if (ev.which == 13) {
+      $("#suggestresults").addClass("smaller");
       $scope.fullTextSearch();
+    } else {
+      $("#suggestresults").removeClass("smaller");
+      $rootScope.$emit('hidesearch');
     }
   }
 
   $scope.suggest = function(){
     
     if( !$scope.search.length ) {
-      $rootScope.$emit( 'hidesuggest' );
+      $rootScope.$emit( 'hideall' );
       return;
     }
-    $http({
-      url: $scope.api_url+'/suggest',
-      method: 'GET',
-      params: {      
-        input: $scope.search,
-        // datasets: $scope.queryDatasets.join(','),
-        lat: $rootScope.geobase ? $rootScope.geobase.lat : 0,
-        lon: $rootScope.geobase ? $rootScope.geobase.lon : 0,
-        zoom:$rootScope.geobase ? $rootScope.geobase.zoom : 12,
-        size: 10
-      },
-      headers: { 'Accept': 'application/json' }
-    }).success(function (data, status, headers, config) {
-      if( data ){
-        $scope.results.length = 0;
-        $scope.results = data.features.map( function( res ){
-          res.htmltext = $sce.trustAsHtml(highlight( res.properties.text, $scope.search ));
-          res.icon = icon( res.properties.type );
-          return res;
-        });
-      }
-      else {
-        $scope.results = [];
-      }
-    }).error(function (data, status, headers, config) {
-      $rootScope.$emit( 'results', [] );
-    });
     
+    getResults('/suggest', 'suggestresults', function(data) {
+      $scope.suggestresults.length = 0;
+      $scope.suggestresults = data.features.map( function( res ){
+        res.htmltext = $sce.trustAsHtml(highlight( res.properties.text, $scope.search ));
+        res.icon = icon( res.properties.type );
+        res.distance = computeDistance(res.geometry.coordinates);
+        return res;
+      });
+    });
   }
 
   $scope.fullTextSearch = function(){
     
     if( !$scope.search.length ) {
-      $rootScope.$emit( 'hidesuggest' );
+      $rootScope.$emit( 'hideall' );
       return;
     }
-    $http({
-      url: $scope.api_url+'/search',
-      method: 'GET',
-      params: {      
-        input: $scope.search,
-        // datasets: $scope.queryDatasets.join(','),
-        lat: $rootScope.geobase ? $rootScope.geobase.lat : 0,
-        lon: $rootScope.geobase ? $rootScope.geobase.lon : 0,
-        zoom:$rootScope.geobase ? $rootScope.geobase.zoom : 12,
-        size: 10
-      },
-      headers: { 'Accept': 'application/json' }
-    }).success(function (data, status, headers, config) {
-      if( data ){
-        $scope.results.length = 0;
-        $scope.results = data.body.map( function( res ){
-          res.htmltext = $sce.trustAsHtml(highlight( res.name.default, $scope.search ));
-          res.icon = icon("");
-          return res;
-        });
-      }
-      else {
-        $scope.results = [];
-      }
-    }).error(function (data, status, headers, config) {
-      $rootScope.$emit( 'results', [] );
+
+    getResults('/search', 'searchresults', function(data) {
+      $scope.searchresults.length = 0;
+      $scope.searchresults = data.features.map( function( res ){
+        res.htmltext = $sce.trustAsHtml(highlight( res.properties.suggest.output, $scope.search ));
+        res.icon = icon( res.properties.type );
+        res.distance = computeDistance(res.geometry.coordinates);
+        return res;
+      });
     });
     
   }

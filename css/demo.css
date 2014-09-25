@@ -46,16 +46,24 @@ input[type="text"].focus {
   box-shadow: 0 0 5px 1px #969696;
 }
 
-ul#results {
+ul.results {
   list-style: none;
   padding: 0px 5px;
   background: white;
   margin: 2px 0;
   max-height: 300px;
   overflow: auto;
+  -webkit-transition: max-height 0.3s;
+  -moz-transition: max-height 0.3s;
+  transition: max-height 0.3s;
 }
 
-ul#results li {
+ul.results.smaller {
+  max-height:20px;
+}
+
+ul.results li {
+  position:relative;
   margin: 0;
   padding: 0;
   display: block;
@@ -64,4 +72,25 @@ ul#results li {
   clear: both;
   height: 40px;
   overflow: hidden;
+}
+
+.aside {
+  position:absolute;
+  top:0px;
+  right:0px;
+  padding: 0 0 0 5px;
+  background: white;
+}
+
+.label {
+  padding: 8px 5px;
+}
+
+.aside em {
+  -webkit-border-top-right-radius: 0px;
+  -webkit-border-bottom-right-radius: 0px;
+  -moz-border-radius-topright: 0px;
+  -moz-border-radius-bottomright: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
 }
