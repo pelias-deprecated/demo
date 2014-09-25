@@ -107,7 +107,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       } else { }
     })
   };
-  
+
   var getResults = function(url, resultkey) {
     $http({
       url: $scope.api_url+url,
@@ -142,7 +142,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.search = '';
   $scope.searchresults = [];
   $scope.suggestresults = [];
-  $scope.api_url = 'http://localhost:3100';
+  $scope.api_url = 'http://pelias.mapzen.com';
 
   $scope.selectResult = function( result ){
     resultSelected(result.properties.text, result.geometry.coordinates)
