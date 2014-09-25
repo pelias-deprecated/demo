@@ -74,6 +74,10 @@ ul.results li {
   overflow: hidden;
 }
 
+ul.results li a {
+  cursor: pointer;
+}
+
 .aside {
   position:absolute;
   top:0px;
