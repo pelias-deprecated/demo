@@ -17,7 +17,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       center: [40.7259, -73.9805]
   });
 
-  L.tileLayer('https://{s}.tiles.mapbox.com/v3/hk23.tm2-basemap/{z}/{x}/{y}.png', {
+  L.tileLayer('//{s}.tiles.mapbox.com/v3/hk23.tm2-basemap/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
       maxZoom: 18
   }).addTo(map);
@@ -157,7 +157,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.search = '';
   $scope.searchresults = [];
   $scope.suggestresults = [];
-  $scope.api_url = 'http://pelias.mapzen.com';
+  $scope.api_url = '//pelias.mapzen.com';
 
   $scope.selectResult = function( result, changeQuery ){
     resultSelected(result.properties.text, result.geometry.coordinates, changeQuery)
