@@ -41,7 +41,7 @@
 
         <ul id="searchresults" class="results">
           <li data-ng-repeat="result in searchresults">
-            <a data-ng-click="selectSearchResult(result)">
+            <a data-ng-click="selectResult(result)">
               <i class="glyphicon glyphicon-{{result.icon}}"></i>
               <span data-ng-bind-html="result.htmltext"></span>
               <div class="aside">

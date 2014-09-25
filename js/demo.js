@@ -70,8 +70,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     $scope.search = search;
     $rootScope.$emit( 'map.setView', geo.reverse(), $rootScope.geobase.zoom );
     $rootScope.$emit( 'map.dropMarker', geo, search);
-    $rootScope.$emit( 'hidesuggest' );
-    $rootScope.$emit( 'hidesearch' );
+    $rootScope.$emit( 'hideall' );
   };
 
   var computeDistance = function(geo) {
@@ -81,7 +80,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     return distance.toFixed( distance < 1 ? 2 : 0 );
   }
 
-  var getResults = function(url, resultkey, successCallback) {
+  var getResults = function(url, resultkey) {
     $http({
       url: $scope.api_url+url,
       method: 'GET',
@@ -96,7 +95,13 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       headers: { 'Accept': 'application/json' }
     }).success(function (data, status, headers, config) {
       if( data ){
-        successCallback(data);
+        $scope[resultkey].length = 0;
+        $scope[resultkey] = data.features.map( function( res ){
+          res.htmltext = $sce.trustAsHtml(highlight( res.properties.text, $scope.search ));
+          res.icon = icon( res.properties.type || 'search' );
+          res.distance = computeDistance(res.geometry.coordinates);
+          return res;
+        });
       }
       else {
         $scope[resultkey] = [];
@@ -113,10 +118,6 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
   $scope.selectResult = function( result ){
     resultSelected(result.properties.text, result.geometry.coordinates)
-  }
-
-  $scope.selectSearchResult = function( result ){
-    resultSelected(result.properties.suggest.output, result.geometry.coordinates)
   }
 
   $rootScope.$on( 'hideall', function( ev ){
@@ -149,15 +150,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       return;
     }
     
-    getResults('/suggest', 'suggestresults', function(data) {
-      $scope.suggestresults.length = 0;
-      $scope.suggestresults = data.features.map( function( res ){
-        res.htmltext = $sce.trustAsHtml(highlight( res.properties.text, $scope.search ));
-        res.icon = icon( res.properties.type );
-        res.distance = computeDistance(res.geometry.coordinates);
-        return res;
-      });
-    });
+    getResults('/suggest', 'suggestresults');
   }
 
   $scope.fullTextSearch = function(){
@@ -167,16 +160,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       return;
     }
 
-    getResults('/search', 'searchresults', function(data) {
-      $scope.searchresults.length = 0;
-      $scope.searchresults = data.features.map( function( res ){
-        res.htmltext = $sce.trustAsHtml(highlight( res.properties.suggest.output, $scope.search ));
-        res.icon = icon( res.properties.type );
-        res.distance = computeDistance(res.geometry.coordinates);
-        return res;
-      });
-    });
-    
+    getResults('/search', 'searchresults');
   }
 
   $scope.$watch( 'search', function( input ){
