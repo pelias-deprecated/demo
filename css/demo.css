@@ -98,3 +98,9 @@ ul.results li a {
   border-top-right-radius: 0px;
   border-bottom-right-radius: 0px;
 }
+/* small mobile devices */
+@media(max-width:767px){
+  #searchbar {
+    width:250px;
+  }
+}
