@@ -17,7 +17,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       center: [40.7259, -73.9805]
   });
 
-  L.tileLayer('http://{s}.tiles.mapbox.com/v3/hk23.tm2-basemap/{z}/{x}/{y}.png', {
+  L.tileLayer('https://{s}.tiles.mapbox.com/v3/hk23.tm2-basemap/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
       maxZoom: 18
   }).addTo(map);
@@ -31,12 +31,22 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     map.setView( geo, zoom || 8 );
   });
 
-  $rootScope.$on( 'map.dropMarker', function( ev, geo, text ){
-    marker = new L.marker(geo).bindPopup(text);
+  $rootScope.$on( 'map.dropMarker', function( ev, geo, text, icon_name ){
+    marker = new L.marker(geo, {icon: L.AwesomeMarkers.icon(
+      {icon: icon_name,  prefix: 'glyphicon', markerColor: 'green'}) }).bindPopup(text);
     map.addLayer(marker);
     marker.openPopup();
   });
 
+  $rootScope.$on( 'map.dropGeoJson', function( ev, data ){
+    var geoJsonLayer = L.geoJson(data, {
+      onEachFeature: function (feature, layer) {
+        layer.bindPopup(feature.properties.text);
+      }
+    }).addTo(map);
+    geoJsonLayer.addData(data);
+  });
+  
   $rootScope.$on( 'map.removeAllMarkers', function( ev, geo, text ){
     if (marker) {
       map.removeLayer(marker);
@@ -73,12 +83,14 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     return 'map-marker';
   };
 
-  var resultSelected = function(search, geo) {
+  var resultSelected = function(search, geo, changeQuery) {
     $rootScope.$emit( 'map.removeAllMarkers' );
-    $scope.search = search;
+    if (changeQuery) {
+      $scope.search = search;  
+      $rootScope.$emit( 'hideall' );
+    }
     $rootScope.$emit( 'map.setView', geo.reverse(), $rootScope.geobase.zoom );
-    $rootScope.$emit( 'map.dropMarker', geo, search);
-    $rootScope.$emit( 'hideall' );
+    $rootScope.$emit( 'map.dropMarker', geo, search, 'search');
   };
 
   var computeDistance = function(geo) {
@@ -103,7 +115,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
         var geo = data.features[0].geometry.coordinates;
         var txt = data.features[0].properties.text;
         $rootScope.$emit( 'map.setView', geo.reverse(), $rootScope.geobase.zoom );
-        $rootScope.$emit( 'map.dropMarker', geo, txt);
+        $rootScope.$emit( 'map.dropMarker', geo, txt, 'star');
       } else { }
     })
   };
@@ -123,6 +135,9 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       headers: { 'Accept': 'application/json' }
     }).success(function (data, status, headers, config) {
       if( data ){
+        if (resultkey=='searchresults') {
+          $rootScope.$emit( 'map.dropGeoJson', data );
+        }
         $scope[resultkey].length = 0;
         $scope[resultkey] = data.features.map( function( res ){
           res.htmltext = $sce.trustAsHtml(highlight( res.properties.text, $scope.search ));
@@ -144,8 +159,8 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.suggestresults = [];
   $scope.api_url = 'http://pelias.mapzen.com';
 
-  $scope.selectResult = function( result ){
-    resultSelected(result.properties.text, result.geometry.coordinates)
+  $scope.selectResult = function( result, changeQuery ){
+    resultSelected(result.properties.text, result.geometry.coordinates, changeQuery)
   }
 
   $rootScope.$on( 'hideall', function( ev ){
