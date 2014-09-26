@@ -23,11 +23,31 @@
 		});
 	};
 
+	L.Hash.parseParams = function(str) {
+		if (!str || str == "") {
+			return undefined;
+		}
+		var pieces = str.split("&"), data = {}, i, parts;
+	    // process each query pair
+	    for (i = 0; i < pieces.length; i++) {
+	        parts = pieces[i].split("=");
+	        if (parts.length < 2) {
+	            parts.push("");
+	        }
+	        data[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
+	    }
+	    return data;
+	}
+
 	L.Hash.parseHash = function(hash) {
 		if(hash.indexOf('#') === 0) {
 			hash = hash.substr(1);
 		}
-		var args = hash.split("/");
+		var hash_obj  = this.parseParams(hash);
+		if (!hash_obj) {
+			return false;
+		}
+		var args = hash_obj.loc.split(",");
 		if (args.length == 3) {
 			var zoom = parseInt(args[0], 10),
 			lat = parseFloat(args[1]),
@@ -52,10 +72,10 @@
 
 		this.triggerEvent(center, zoom);
 
-		return "#" + [zoom,
+		return "#loc=" + [zoom,
 			center.lat.toFixed(precision),
 			center.lng.toFixed(precision)
-		].join("/");
+		].join(",");
 	},
 
 	L.Hash.prototype = {
@@ -65,6 +85,7 @@
 		parseHash: L.Hash.parseHash,
 		formatHash: L.Hash.formatHash,
 		triggerEvent: L.Hash.triggerEvent,
+		parseParams: L.Hash.parseParams,
 
 		init: function(map) {
 			this.map = map;
