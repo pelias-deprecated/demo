@@ -53,6 +53,13 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     }
   });
 
+  $rootScope.$on( 'fullTextSearch', function( ev, text ){
+    $(document).trigger({
+      'type': "pelias:fullTextSearch",
+      'text' : text
+    });    
+  });
+
   map.on('click', function(e) {
     var geo = {
       'lat': e.latlng.lat,
@@ -202,12 +209,20 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       $rootScope.$emit( 'hideall' );
       return;
     }
-
+    $rootScope.$emit('fullTextSearch', $scope.search);
     getResults('/search', 'searchresults');
   }
 
   $scope.$watch( 'search', function( input ){
     $scope.suggest();
   });
+
+  // faking a search when query params are present
+  var hash_query = L.Hash.parseParams(location.hash).q;
+  if (hash_query){
+    $scope.search = hash_query
+    $scope.keyPressed({ 'which': 13});
+  }
+    
   $(document).on('new-location', $scope.suggest);
 })

@@ -55,10 +55,18 @@
 			if (isNaN(zoom) || isNaN(lat) || isNaN(lon)) {
 				return false;
 			} else {
-				return {
+				var query = hash_obj.q ? hash_obj.q : null;
+				var return_obj = {
 					center: new L.LatLng(lat, lon),
 					zoom: zoom
 				};
+				if (query) {
+					if (this.lastSearchQuery != query) {
+						this.lastSearchQuery = query;
+					}
+					return_obj['q'] = query;
+				}
+				return return_obj;
 			}
 		} else {
 			return false;
@@ -72,15 +80,19 @@
 
 		this.triggerEvent(center, zoom);
 
-		return "#loc=" + [zoom,
+		var loc = "#loc=" + [zoom,
 			center.lat.toFixed(precision),
 			center.lng.toFixed(precision)
 		].join(",");
+
+		var query = this.lastSearchQuery ? "&q=" + this.lastSearchQuery : "";
+		return loc + query;
 	},
 
 	L.Hash.prototype = {
 		map: null,
 		lastHash: null,
+		lastSearchQuery: null,
 
 		parseHash: L.Hash.parseHash,
 		formatHash: L.Hash.formatHash,
@@ -92,6 +104,7 @@
 
 			// reset the hash
 			this.lastHash = null;
+			this.lastSearchQuery = null;
 			this.onHashChange();
 
 			if (!this.isListening) {
@@ -165,6 +178,13 @@
 		hashChangeInterval: null,
 		startListening: function() {
 			this.map.on("moveend", this.onMapMove, this);
+			var that = this;
+			$(document).on("pelias:fullTextSearch", function(e){
+				if (that.lastSearchQuery != e.text) {
+					that.lastSearchQuery = e.text;
+					that.onMapMove();
+				}
+			});
 
 			if (HAS_HASHCHANGE) {
 				L.DomEvent.addListener(window, "hashchange", this.onHashChange);
