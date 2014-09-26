@@ -1,5 +1,13 @@
 var app = angular.module('pelias', []);
+var hash_params = L.Hash.parseHash(location.hash);
+
 app.run(function($rootScope) {
+  var hash_loc = hash_params ? hash_params : {'center': {'lat': 40.7259, 'lng': -73.9805}, 'zoom': 12};
+  $rootScope.geobase = {
+    'zoom': hash_loc.zoom,
+    'lat' : hash_loc.center.lat,
+    'lon' : hash_loc.center.lng
+  }
   $(document).on('new-location', function(e){
     $rootScope.geobase = {
       'zoom': e.zoom,
@@ -12,9 +20,9 @@ app.run(function($rootScope) {
 app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     // --------- suggestions ---------
   var map = L.map('map', {
-      zoom: 12, 
+      zoom: $rootScope.geobase.zoom,
       zoomControl: false,
-      center: [40.7259, -73.9805]
+      center: [$rootScope.geobase.lat, $rootScope.geobase.lon]
   });
 
   L.tileLayer('//{s}.tiles.mapbox.com/v3/hk23.tm2-basemap/{z}/{x}/{y}.png', {
@@ -218,7 +226,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   });
 
   // faking a search when query params are present
-  var hash_query = L.Hash.parseParams(location.hash).q;
+  var hash_query  = hash_params ? hash_params.q : false;
   if (hash_query){
     $scope.search = hash_query
     $scope.keyPressed({ 'which': 13});
