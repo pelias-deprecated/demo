@@ -201,6 +201,14 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     }
   }
 
+  $scope.onFocus = function(ev) {
+    // $("#searchresults").removeClass("smaller");
+  }
+
+  $scope.onBlur = function(ev) {
+    // $("#searchresults").addClass("smaller");
+  }
+
   $scope.suggest = function(){
     
     if( !$scope.search.length ) {

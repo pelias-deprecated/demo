@@ -26,7 +26,7 @@
       <section id="searchbar" data-ng-controller="SearchController">
         <form role="search">
           <div class="input">
-            <input type="text" data-ng-model="search" class="form-control" ng-keydown="keyPressed($event)" placeholder="Search" />
+            <input type="text" data-ng-model="search" class="form-control" ng-focus="onFocus($event)" ng-blur="onBlur($event)" ng-keydown="keyPressed($event)" placeholder="Search" />
           </div>
         </form>
 
