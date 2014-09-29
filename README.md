@@ -17,4 +17,4 @@ If you want to see '/search' results, simply hit enter.
 
 In addition to suggest and search, you can also click anywhere on the map to drop a pin and reverse geocode using the '/reverse' endpoint. 
 
-![Reverse](/css/images/screeshots/reverse.png?raw=true "Reverse Geocoder")
+![Reverse](/css/images/screenshots/reverse.png?raw=true "Reverse Geocoder")
