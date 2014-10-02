@@ -59,7 +59,7 @@ ul.results {
 }
 
 ul.results.smaller {
-  max-height:20px;
+  max-height:0px;
 }
 
 ul.results li {
