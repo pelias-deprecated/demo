@@ -172,7 +172,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.search = '';
   $scope.searchresults = [];
   $scope.suggestresults = [];
-  $scope.api_url = '//pelias.mapzen.com';
+  $scope.api_url = '//pelias-prod2-us-east-repose-926611163.us-east-1.elb.amazonaws.com';
 
   $scope.selectResult = function( result, changeQuery ){
     resultSelected(result.properties.text, result.geometry.coordinates, changeQuery)
