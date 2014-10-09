@@ -49,6 +49,18 @@
           </li>
         </ul>
 
+        <ul id="suggest2results" class="results results2">
+          <li data-ng-repeat="result in suggest2results">
+            <a data-ng-click="selectResult(result, true)">
+              <i class="glyphicon glyphicon-{{result.icon}}"></i>
+              <span data-ng-bind-html="result.htmltext"></span>
+              <div class="aside">
+                <em class="label label-info">{{result.distance}}km</em>
+              </div>
+            </a>
+          </li>
+        </ul>
+
         <ul id="searchresults" class="results">
           <li data-ng-repeat="result in searchresults">
             <a data-ng-click="selectResult(result)">

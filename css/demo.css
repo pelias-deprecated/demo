@@ -58,6 +58,13 @@ ul.results {
   transition: max-height 0.3s;
 }
 
+ul.results.results2 {
+  position: absolute;
+  left: 352px;
+  top: 45px;
+  width: 350px;
+}
+
 ul.results.smaller {
   max-height:0px;
 }

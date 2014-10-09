@@ -136,9 +136,9 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     })
   };
 
-  var getResults = function(url, resultkey) {
+  var getResults = function(url, resultkey, api_url) {
     $http({
-      url: $scope.api_url+url,
+      url: (api_url ? api_url : $scope.api_url)+url,
       method: 'GET',
       params: {      
         input: $scope.search,
@@ -173,7 +173,9 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.search = '';
   $scope.searchresults = [];
   $scope.suggestresults = [];
+  $scope.suggest2results = [];
   $scope.api_url = '//pelias.mapzen.com';
+  $scope.api_url2= '//pelias.dev.mapzen.com';
 
   $scope.selectResult = function( result, changeQuery ){
     resultSelected(result.properties.text, result.geometry.coordinates, changeQuery)
@@ -181,11 +183,13 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
   $rootScope.$on( 'hideall', function( ev ){
     $scope.suggestresults = [];
+    $scope.suggest2results = [];
     $scope.searchresults = []
   });
 
   $rootScope.$on( 'hidesuggest', function( ev ){
     $scope.suggestresults = [];
+    $scope.suggest2results = [];
   });
 
   $rootScope.$on( 'hidesearch', function( ev ){
@@ -218,6 +222,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     }
     
     getResults('/suggest', 'suggestresults');
+    getResults('/suggest', 'suggest2results', $scope.api_url2);
   }
 
   $scope.fullTextSearch = function(){
