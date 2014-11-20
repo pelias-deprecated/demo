@@ -30,7 +30,8 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       maxZoom: 18
   }).addTo(map);
   new L.Control.Zoom({ position: 'topright' }).addTo(map);
-
+  L.control.locate({ position: 'topright', keepCurrentZoomLevel: true }).addTo(map);
+  L.control.locations({ position: 'topright', keepCurrentZoomLevel: true }).addTo(map);
   // Set up the hash
   var hash = new L.Hash(map);
   var marker;
