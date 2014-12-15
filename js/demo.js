@@ -22,12 +22,15 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   var map = L.map('map', {
       zoom: $rootScope.geobase.zoom,
       zoomControl: false,
-      center: [$rootScope.geobase.lat, $rootScope.geobase.lon]
+      center: [$rootScope.geobase.lat, $rootScope.geobase.lon],
+      maxBounds: L.latLngBounds(L.latLng(-80, -180), L.latLng(82, 180))
   });
 
   L.tileLayer('//{s}.tiles.mapbox.com/v3/randyme.i0568680/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      maxZoom: 18
+      maxZoom: 18,
+      minZoom: 3,
+      noWrap: true
   }).addTo(map);
   new L.Control.Zoom({ position: 'topright' }).addTo(map);
   L.control.locate({ position: 'topright', keepCurrentZoomLevel: true }).addTo(map);
@@ -55,7 +58,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     }).addTo(map);
     geoJsonLayer.addData(data);
   });
-  
+
   $rootScope.$on( 'map.removeAllMarkers', function( ev, geo, text ){
     if (marker) {
       map.removeLayer(marker);
@@ -66,7 +69,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     $(document).trigger({
       'type': "pelias:fullTextSearch",
       'text' : text
-    });    
+    });
   });
 
   map.on('click', function(e) {
@@ -102,7 +105,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   var resultSelected = function(search, geo, changeQuery) {
     $rootScope.$emit( 'map.removeAllMarkers' );
     if (changeQuery) {
-      $scope.search = search;  
+      $scope.search = search;
       $rootScope.$emit( 'hideall' );
     }
     $rootScope.$emit( 'map.setView', geo.reverse(), $rootScope.geobase.zoom );
@@ -124,7 +127,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
         lat: geo.lat,
         lon: geo.lon,
         zoom:$rootScope.geobase ? $rootScope.geobase.zoom : 12
-      }, 
+      },
       headers: { 'Accept': 'application/json' }
     }).success(function (data, status, headers, config) {
       if (data) {
@@ -140,7 +143,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     $http({
       url: $scope.api_url+url,
       method: 'GET',
-      params: {      
+      params: {
         input: $scope.search,
         // datasets: $scope.queryDatasets.join(','),
         lat: $rootScope.geobase ? $rootScope.geobase.lat : 0,
@@ -211,17 +214,17 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   }
 
   $scope.suggest = function(){
-    
+
     if( !$scope.search.length ) {
       $rootScope.$emit( 'hideall' );
       return;
     }
-    
+
     getResults('/suggest', 'suggestresults');
   }
 
   $scope.fullTextSearch = function(){
-    
+
     if( !$scope.search.length ) {
       $rootScope.$emit( 'hideall' );
       return;
@@ -240,6 +243,6 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     $scope.search = hash_query
     $scope.keyPressed({ 'which': 13});
   }
-    
+
   $(document).on('new-location', $scope.suggest);
 })
