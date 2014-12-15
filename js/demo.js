@@ -55,7 +55,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     }).addTo(map);
     geoJsonLayer.addData(data);
   });
-  
+
   $rootScope.$on( 'map.removeAllMarkers', function( ev, geo, text ){
     if (marker) {
       map.removeLayer(marker);
@@ -66,7 +66,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     $(document).trigger({
       'type': "pelias:fullTextSearch",
       'text' : text
-    });    
+    });
   });
 
   map.on('click', function(e) {
@@ -102,7 +102,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   var resultSelected = function(search, geo, changeQuery) {
     $rootScope.$emit( 'map.removeAllMarkers' );
     if (changeQuery) {
-      $scope.search = search;  
+      $scope.search = search;
       $rootScope.$emit( 'hideall' );
     }
     $rootScope.$emit( 'map.setView', geo.reverse(), $rootScope.geobase.zoom );
@@ -124,7 +124,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
         lat: geo.lat,
         lon: geo.lon,
         zoom:$rootScope.geobase ? $rootScope.geobase.zoom : 12
-      }, 
+      },
       headers: { 'Accept': 'application/json' }
     }).success(function (data, status, headers, config) {
       if (data) {
@@ -140,7 +140,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     $http({
       url: $scope.api_url+url,
       method: 'GET',
-      params: {      
+      params: {
         input: $scope.search,
         // datasets: $scope.queryDatasets.join(','),
         lat: $rootScope.geobase ? $rootScope.geobase.lat : 0,
@@ -211,17 +211,17 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   }
 
   $scope.suggest = function(){
-    
+
     if( !$scope.search.length ) {
       $rootScope.$emit( 'hideall' );
       return;
     }
-    
+
     getResults('/suggest', 'suggestresults');
   }
 
   $scope.fullTextSearch = function(){
-    
+
     if( !$scope.search.length ) {
       $rootScope.$emit( 'hideall' );
       return;
@@ -240,6 +240,6 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     $scope.search = hash_query
     $scope.keyPressed({ 'which': 13});
   }
-    
+
   $(document).on('new-location', $scope.suggest);
 })
