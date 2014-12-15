@@ -22,12 +22,15 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   var map = L.map('map', {
       zoom: $rootScope.geobase.zoom,
       zoomControl: false,
-      center: [$rootScope.geobase.lat, $rootScope.geobase.lon]
+      center: [$rootScope.geobase.lat, $rootScope.geobase.lon],
+      maxBounds: L.latLngBounds(L.latLng(-80, -180), L.latLng(82, 180))
   });
 
   L.tileLayer('//{s}.tiles.mapbox.com/v3/randyme.i0568680/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      maxZoom: 18
+      maxZoom: 18,
+      minZoom: 3,
+      noWrap: true
   }).addTo(map);
   new L.Control.Zoom({ position: 'topright' }).addTo(map);
   L.control.locate({ position: 'topright', keepCurrentZoomLevel: true }).addTo(map);
