@@ -147,7 +147,6 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     bbox.push(bounds._southWest.lat);
     bbox.push(bounds._southWest.lng);
 
-    console.log(bbox)
     $http({
       url: $scope.api_url+url,
       method: 'GET',
