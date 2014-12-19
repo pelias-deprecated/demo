@@ -140,6 +140,14 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   };
 
   var getResults = function(url, resultkey) {
+    var bounds = map.getBounds();
+    var bbox = [];
+    bbox.push(bounds._northEast.lat);
+    bbox.push(bounds._northEast.lng);
+    bbox.push(bounds._southWest.lat);
+    bbox.push(bounds._southWest.lng);
+
+    console.log(bbox)
     $http({
       url: $scope.api_url+url,
       method: 'GET',
@@ -149,6 +157,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
         lat: $rootScope.geobase ? $rootScope.geobase.lat : 0,
         lon: $rootScope.geobase ? $rootScope.geobase.lon : 0,
         zoom:$rootScope.geobase ? $rootScope.geobase.zoom : 12,
+        bbox:bbox.length === 4  ? bbox.join(',') : '',
         size: 10
       },
       headers: { 'Accept': 'application/json' }
@@ -176,7 +185,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.search = '';
   $scope.searchresults = [];
   $scope.suggestresults = [];
-  $scope.api_url = '//pelias.mapzen.com';
+  $scope.api_url = '//pelias.dev.mapzen.com';
 
   $scope.selectResult = function( result, changeQuery ){
     resultSelected(result.properties.text, result.geometry.coordinates, changeQuery)
