@@ -38,21 +38,31 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   // Set up the hash
   var hash = new L.Hash(map);
   var marker;
+  var markers = [];
+  var remove_markers = function(){
+
+    for (i=0; i<markers.length; i++) {
+      map.removeLayer(markers[i]);
+    }
+    markers = [];
+  };
 
   $rootScope.$on( 'map.setView', function( ev, geo, zoom ){
     map.setView( geo, zoom || 8 );
   });
 
   $rootScope.$on( 'map.dropMarker', function( ev, geo, text, icon_name ){
-    marker = new L.marker(geo, {icon: L.AwesomeMarkers.icon(
-      {icon: icon_name,  prefix: 'glyphicon', markerColor: 'green'}) }).bindPopup(text);
+    marker = new L.marker(geo).bindPopup(text);
     map.addLayer(marker);
+    markers.push(marker);
     marker.openPopup();
   });
 
   $rootScope.$on( 'map.dropGeoJson', function( ev, data ){
+    remove_markers();
     var geoJsonLayer = L.geoJson(data, {
       onEachFeature: function (feature, layer) {
+        markers.push(layer);
         layer.bindPopup(feature.properties.text);
       }
     }).addTo(map);
@@ -60,9 +70,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   });
 
   $rootScope.$on( 'map.removeAllMarkers', function( ev, geo, text ){
-    if (marker) {
-      map.removeLayer(marker);
-    }
+    remove_markers();
   });
 
   $rootScope.$on( 'fullTextSearch', function( ev, text ){
@@ -133,8 +141,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       if (data) {
         var geo = data.features[0].geometry.coordinates;
         var txt = data.features[0].properties.text;
-        $rootScope.$emit( 'map.setView', geo.reverse(), $rootScope.geobase.zoom );
-        $rootScope.$emit( 'map.dropMarker', geo, txt, 'star');
+        $rootScope.$emit( 'map.dropMarker', geo.reverse(), txt, 'star');
       } else { }
     })
   };
@@ -184,7 +191,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.search = '';
   $scope.searchresults = [];
   $scope.suggestresults = [];
-  $scope.api_url = '//pelias.dev.mapzen.com';
+  $scope.api_url = '//localhost:3100';
 
   $scope.selectResult = function( result, changeQuery ){
     resultSelected(result.properties.text, result.geometry.coordinates, changeQuery)
