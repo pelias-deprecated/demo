@@ -176,7 +176,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.search = '';
   $scope.searchresults = [];
   $scope.suggestresults = [];
-  $scope.api_url = '//pelias.mapzen.com';
+  $scope.api_url = '//pelias.dev.mapzen.com';
 
   $scope.selectResult = function( result, changeQuery ){
     resultSelected(result.properties.text, result.geometry.coordinates, changeQuery)
@@ -220,7 +220,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       return;
     }
 
-    getResults('/suggest', 'suggestresults');
+    getResults('/suggest/coarse', 'suggestresults');
   }
 
   $scope.fullTextSearch = function(){
