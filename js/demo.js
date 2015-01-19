@@ -235,7 +235,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       return;
     }
 
-    getResults('/suggest', 'suggestresults');
+    getResults('/suggest/coarse', 'suggestresults');
   }
 
   $scope.fullTextSearch = function(){
@@ -245,7 +245,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       return;
     }
     $rootScope.$emit('fullTextSearch', $scope.search);
-    getResults('/search', 'searchresults');
+    getResults('/search/coarse', 'searchresults');
   }
 
   $scope.$watch( 'search', function( input ){
