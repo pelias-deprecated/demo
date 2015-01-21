@@ -73,10 +73,11 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     remove_markers();
   });
 
-  $rootScope.$on( 'fullTextSearch', function( ev, text ){
+  $rootScope.$on( 'fullTextSearch', function( ev, text, searchType ){
     $(document).trigger({
       'type': "pelias:fullTextSearch",
-      'text' : text
+      'text' : text,
+      'searchType' : searchType
     });
   });
 
@@ -191,11 +192,11 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.search = '';
   $scope.searchresults = [];
   $scope.suggestresults = [];
-  $scope.coarse = 'FINE';
+  $scope.searchType = 'FINE';
   $scope.api_url = '//pelias.mapzen.com';
 
-  $scope.switchType = function(coarse) {
-    $scope.coarse = coarse === 'FINE' ? 'COARSE' : 'FINE';
+  $scope.switchType = function(type) {
+    $scope.searchType = type === 'FINE' ? 'COARSE' : 'FINE';
     $scope.suggest();
     $scope.fullTextSearch();
   };
@@ -242,7 +243,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       return;
     }
 
-    var url = $scope.coarse === 'FINE' ? '/suggest' : '/suggest/coarse';
+    var url = $scope.searchType === 'FINE' ? '/suggest' : '/suggest/coarse';
     getResults(url, 'suggestresults');
   }
 
@@ -252,9 +253,9 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       $rootScope.$emit( 'hideall' );
       return;
     }
-    $rootScope.$emit('fullTextSearch', $scope.search);
+    $rootScope.$emit('fullTextSearch', $scope.search, $scope.searchType);
 
-    var url = $scope.coarse === 'FINE' ? '/search' : '/search/coarse';
+    var url = $scope.searchType === 'FINE' ? '/search' : '/search/coarse';
     getResults(url, 'searchresults');
   }
 
@@ -266,6 +267,11 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   var hash_query  = hash_params ? hash_params.q : false;
   if (hash_query){
     $scope.search = hash_query
+    $scope.keyPressed({ 'which': 13});
+  }
+  var hash_search_type  = hash_params ? hash_params.t : false;
+  if (hash_search_type){
+    $scope.searchType = hash_search_type;
     $scope.keyPressed({ 'which': 13});
   }
 
