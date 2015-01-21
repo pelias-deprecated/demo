@@ -191,7 +191,14 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.search = '';
   $scope.searchresults = [];
   $scope.suggestresults = [];
-  $scope.api_url = '//pelias.dev.mapzen.com';
+  $scope.coarse = 'FINE';
+  $scope.api_url = '//pelias.mapzen.com';
+
+  $scope.switchType = function(coarse) {
+    $scope.coarse = coarse === 'FINE' ? 'COARSE' : 'FINE';
+    $scope.suggest();
+    $scope.fullTextSearch();
+  };
 
   $scope.selectResult = function( result, changeQuery ){
     resultSelected(result.properties.text, result.geometry.coordinates, changeQuery)
@@ -235,7 +242,8 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       return;
     }
 
-    getResults('/suggest', 'suggestresults');
+    var url = $scope.coarse === 'FINE' ? '/suggest' : '/suggest/coarse';
+    getResults(url, 'suggestresults');
   }
 
   $scope.fullTextSearch = function(){
@@ -245,7 +253,9 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       return;
     }
     $rootScope.$emit('fullTextSearch', $scope.search);
-    getResults('/search', 'searchresults');
+
+    var url = $scope.coarse === 'FINE' ? '/search' : '/search/coarse';
+    getResults(url, 'searchresults');
   }
 
   $scope.$watch( 'search', function( input ){
