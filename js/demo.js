@@ -197,7 +197,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
   $scope.switchType = function(type) {
     $scope.searchType = type === 'FINE' ? 'COARSE' : 'FINE';
-    $scope.suggest();
+    $rootScope.$emit( 'hideall' );
     $scope.fullTextSearch();
   };
 
