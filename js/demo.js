@@ -161,10 +161,10 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       params: {
         input: $scope.search,
         // datasets: $scope.queryDatasets.join(','),
-        lat: $rootScope.geobase ? $rootScope.geobase.lat : 0,
-        lon: $rootScope.geobase ? $rootScope.geobase.lon : 0,
-        zoom:$rootScope.geobase ? $rootScope.geobase.zoom : 12,
-        bbox:bbox.length === 4  ? bbox.join(',') : '',
+        // lat: $rootScope.geobase ? $rootScope.geobase.lat : 0,
+        // lon: $rootScope.geobase ? $rootScope.geobase.lon : 0,
+        // zoom:$rootScope.geobase ? $rootScope.geobase.zoom : 12,
+        // bbox:bbox.length === 4  ? bbox.join(',') : '',
         size: 10
       },
       headers: { 'Accept': 'application/json' }
@@ -193,7 +193,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.searchresults = [];
   $scope.suggestresults = [];
   $scope.searchType = 'FINE';
-  $scope.api_url = '//pelias.mapzen.com';
+  $scope.api_url = '//pelias.dev.mapzen.com';
 
   $scope.switchType = function(type) {
     $scope.searchType = type === 'FINE' ? 'COARSE' : 'FINE';
