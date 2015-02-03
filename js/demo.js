@@ -73,12 +73,12 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     remove_markers();
   });
 
-  $rootScope.$on( 'fullTextSearch', function( ev, text, searchType, hb ){
+  $rootScope.$on( 'fullTextSearch', function( ev, text, searchType, geoBias ){
     $(document).trigger({
       'type': "pelias:fullTextSearch",
       'text' : text,
       'searchType' : searchType,
-      'geoBias': hb
+      'geoBias': geoBias
     });
   });
 
