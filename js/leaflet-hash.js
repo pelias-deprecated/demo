@@ -57,7 +57,7 @@
 			} else {
 				var query = hash_obj.q ? hash_obj.q : null;
 				var searchType = hash_obj.t ? hash_obj.t : null;
-				var geoBias = hash_obj.hb ? hash_obj.hb : null;
+				var geoBias = hash_obj.gb ? hash_obj.gb : null;
 				var return_obj = {
 					center: new L.LatLng(lat, lon),
 					zoom: zoom
@@ -74,7 +74,7 @@
 				}
 				if ( geoBias && this.lastGeoBias != geoBias ) {
 					this.lastGeoBias = geoBias;
-					return_obj['hb'] = geoBias;
+					return_obj['gb'] = geoBias;
 				}
 				return return_obj;
 			}
@@ -97,7 +97,7 @@
 
 		var query = this.lastSearchQuery ? "&q=" + this.lastSearchQuery : "";
 		var searchType = this.lastSearchType ? "&t=" + this.lastSearchType : "";
-		var geoBias = this.lastGeoBias ? "&hb=" + this.lastGeoBias : "";
+		var geoBias = this.lastGeoBias ? "&gb=" + this.lastGeoBias : "";
 		return loc + query + searchType + geoBias;
 	},
 
