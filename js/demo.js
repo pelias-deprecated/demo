@@ -183,6 +183,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
         $scope[resultkey] = data.features.map( function( res ){
           res.htmltext = $sce.trustAsHtml(highlight( res.properties.text, $scope.search ));
           res.icon = icon( res.properties.type || 'search' );
+          res.type = res.properties.type;
           res.distance = computeDistance(res.geometry.coordinates);
           return res;
         });

@@ -47,7 +47,7 @@
         <ul id="suggestresults" class="results">
           <li data-ng-repeat="result in suggestresults">
             <a data-ng-click="selectResult(result, true)">
-              <i class="glyphicon glyphicon-{{result.icon}}"></i>
+              <i title="{{result.type}}" class="glyphicon glyphicon-{{result.icon}}"></i>
               <span data-ng-bind-html="result.htmltext"></span>
               <div class="aside">
                 <em class="label label-info">{{result.distance}}km</em>
@@ -59,7 +59,7 @@
         <ul id="searchresults" class="results">
           <li data-ng-repeat="result in searchresults">
             <a data-ng-click="selectResult(result)">
-              <i class="glyphicon glyphicon-{{result.icon}}"></i>
+              <i title="{{result.type}}" class="glyphicon glyphicon-{{result.icon}}"></i>
               <span data-ng-bind-html="result.htmltext"></span>
               <div class="aside">
                 <em class="label label-info">{{result.distance}}km</em>
