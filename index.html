@@ -33,7 +33,10 @@
         <form role="search">
           <div class="input">
             <input type="text" data-ng-model="search" class="form-control" ng-focus="onFocus($event)" ng-blur="onBlur($event)" ng-keydown="keyPressed($event)" placeholder="Search" />
-            <div class="aside">
+            <div class="aside geobias-{{geobias}}">
+              <a data-ng-click="switchGeobias(geobias)">
+                <span class="fa fa-location-arrow"></span>
+              </a>
               <a data-ng-click="switchType(searchType)">
                 <span class="label label-default label-searchType">{{searchType}}</span>
               </a>
@@ -44,7 +47,7 @@
         <ul id="suggestresults" class="results">
           <li data-ng-repeat="result in suggestresults">
             <a data-ng-click="selectResult(result, true)">
-              <i class="glyphicon glyphicon-{{result.icon}}"></i>
+              <i title="{{result.type}}" class="glyphicon glyphicon-{{result.icon}}"></i>
               <span data-ng-bind-html="result.htmltext"></span>
               <div class="aside">
                 <em class="label label-info">{{result.distance}}km</em>
@@ -56,7 +59,7 @@
         <ul id="searchresults" class="results">
           <li data-ng-repeat="result in searchresults">
             <a data-ng-click="selectResult(result)">
-              <i class="glyphicon glyphicon-{{result.icon}}"></i>
+              <i title="{{result.type}}" class="glyphicon glyphicon-{{result.icon}}"></i>
               <span data-ng-bind-html="result.htmltext"></span>
               <div class="aside">
                 <em class="label label-info">{{result.distance}}km</em>

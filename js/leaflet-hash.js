@@ -57,6 +57,7 @@
 			} else {
 				var query = hash_obj.q ? hash_obj.q : null;
 				var searchType = hash_obj.t ? hash_obj.t : null;
+				var geoBias = hash_obj.gb ? hash_obj.gb : null;
 				var return_obj = {
 					center: new L.LatLng(lat, lon),
 					zoom: zoom
@@ -70,6 +71,10 @@
 				if ( searchType && this.lastSearchType != searchType ) {
 					this.lastSearchType = searchType;
 					return_obj['t'] = searchType;
+				}
+				if ( geoBias && this.lastGeoBias != geoBias ) {
+					this.lastGeoBias = geoBias;
+					return_obj['gb'] = geoBias;
 				}
 				return return_obj;
 			}
@@ -92,7 +97,8 @@
 
 		var query = this.lastSearchQuery ? "&q=" + this.lastSearchQuery : "";
 		var searchType = this.lastSearchType ? "&t=" + this.lastSearchType : "";
-		return loc + query + searchType;
+		var geoBias = this.lastGeoBias ? "&gb=" + this.lastGeoBias : "";
+		return loc + query + searchType + geoBias;
 	},
 
 	L.Hash.prototype = {
@@ -100,6 +106,7 @@
 		lastHash: null,
 		lastSearchQuery: null,
 		lastSearchType: null,
+		lastGeoBias: null,
 
 		parseHash: L.Hash.parseHash,
 		formatHash: L.Hash.formatHash,
@@ -113,6 +120,7 @@
 			this.lastHash = null;
 			this.lastSearchQuery = null;
 			this.lastSearchType = null;
+			this.lastGeoBias = null;
 			this.onHashChange();
 
 			if (!this.isListening) {
@@ -194,6 +202,10 @@
 				}
 				if (that.lastSearchType != e.searchType) {
 					that.lastSearchType  = e.searchType;
+					that.onMapMove();
+				}
+				if (that.lastGeoBias != e.geoBias) {
+					that.lastGeoBias  = e.geoBias;
 					that.onMapMove();
 				}
 			});

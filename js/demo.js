@@ -73,11 +73,12 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     remove_markers();
   });
 
-  $rootScope.$on( 'fullTextSearch', function( ev, text, searchType ){
+  $rootScope.$on( 'fullTextSearch', function( ev, text, searchType, geoBias ){
     $(document).trigger({
       'type': "pelias:fullTextSearch",
       'text' : text,
-      'searchType' : searchType
+      'searchType' : searchType,
+      'geoBias': geoBias
     });
   });
 
@@ -148,25 +149,30 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   };
 
   var getResults = function(url, resultkey) {
-    var bounds = map.getBounds();
-    var bbox = [];
-    bbox.push(bounds._northEast.lat);
-    bbox.push(bounds._northEast.lng);
-    bbox.push(bounds._southWest.lat);
-    bbox.push(bounds._southWest.lng);
+    var params = {
+      input: $scope.search,
+      // datasets: $scope.queryDatasets.join(','),
+      size: 10
+    }
+
+    if ($scope.geobias === 'on') {
+      var bounds = map.getBounds();
+      var bbox = [];
+      bbox.push(bounds._northEast.lat);
+      bbox.push(bounds._northEast.lng);
+      bbox.push(bounds._southWest.lat);
+      bbox.push(bounds._southWest.lng);
+
+      params.lat = $rootScope.geobase ? $rootScope.geobase.lat : 0;
+      params.lon = $rootScope.geobase ? $rootScope.geobase.lon : 0;
+      params.zoom= $rootScope.geobase ? $rootScope.geobase.zoom : 12;
+      params.bbox= bbox.length === 4  ? bbox.join(',') : '';
+    }
 
     $http({
       url: $scope.api_url+url,
       method: 'GET',
-      params: {
-        input: $scope.search,
-        // datasets: $scope.queryDatasets.join(','),
-        lat: $rootScope.geobase ? $rootScope.geobase.lat : 0,
-        lon: $rootScope.geobase ? $rootScope.geobase.lon : 0,
-        zoom:$rootScope.geobase ? $rootScope.geobase.zoom : 12,
-        bbox:bbox.length === 4  ? bbox.join(',') : '',
-        size: 10
-      },
+      params: params,
       headers: { 'Accept': 'application/json' }
     }).success(function (data, status, headers, config) {
       if( data ){
@@ -177,6 +183,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
         $scope[resultkey] = data.features.map( function( res ){
           res.htmltext = $sce.trustAsHtml(highlight( res.properties.text, $scope.search ));
           res.icon = icon( res.properties.type || 'search' );
+          res.type = res.properties.type;
           res.distance = computeDistance(res.geometry.coordinates);
           return res;
         });
@@ -192,11 +199,18 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.search = '';
   $scope.searchresults = [];
   $scope.suggestresults = [];
-  $scope.searchType = 'FINE';
+  $scope.geobias = 'on';
+  $scope.searchType = 'fine';
   $scope.api_url = '//pelias.mapzen.com';
 
   $scope.switchType = function(type) {
-    $scope.searchType = type === 'FINE' ? 'COARSE' : 'FINE';
+    $scope.searchType = type === 'fine' ? 'coarse' : 'fine';
+    $rootScope.$emit( 'hideall' );
+    $scope.fullTextSearch();
+  };
+
+  $scope.switchGeobias = function(geobias) {
+    $scope.geobias = geobias === 'on' ? 'off' : 'on';
     $rootScope.$emit( 'hideall' );
     $scope.fullTextSearch();
   };
@@ -243,7 +257,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       return;
     }
 
-    var url = $scope.searchType === 'FINE' ? '/suggest' : '/suggest/coarse';
+    var url = $scope.searchType.toLowerCase() === 'fine' ? '/suggest' : '/suggest/coarse';
     getResults(url, 'suggestresults');
   }
 
@@ -253,9 +267,9 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       $rootScope.$emit( 'hideall' );
       return;
     }
-    $rootScope.$emit('fullTextSearch', $scope.search, $scope.searchType);
+    $rootScope.$emit('fullTextSearch', $scope.search, $scope.searchType, $scope.geobias);
 
-    var url = $scope.searchType === 'FINE' ? '/search' : '/search/coarse';
+    var url = $scope.searchType.toLowerCase() === 'fine' ? '/search' : '/search/coarse';
     getResults(url, 'searchresults');
   }
 
@@ -272,6 +286,11 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   var hash_search_type  = hash_params ? hash_params.t : false;
   if (hash_search_type){
     $scope.searchType = hash_search_type;
+    $scope.keyPressed({ 'which': 13});
+  }
+  var hash_geobias  = hash_params ? hash_params.gb : false;
+  if (hash_geobias){
+    $scope.geobias = hash_geobias;
     $scope.keyPressed({ 'which': 13});
   }
 
