@@ -199,11 +199,11 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.searchresults = [];
   $scope.suggestresults = [];
   $scope.geobias = 'on';
-  $scope.searchType = 'FINE';
+  $scope.searchType = 'fine';
   $scope.api_url = '//pelias.mapzen.com';
 
   $scope.switchType = function(type) {
-    $scope.searchType = type === 'FINE' ? 'COARSE' : 'FINE';
+    $scope.searchType = type === 'fine' ? 'coarse' : 'fine';
     $rootScope.$emit( 'hideall' );
     $scope.fullTextSearch();
   };
@@ -256,7 +256,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       return;
     }
 
-    var url = $scope.searchType === 'FINE' ? '/suggest' : '/suggest/coarse';
+    var url = $scope.searchType.toLowerCase() === 'fine' ? '/suggest' : '/suggest/coarse';
     getResults(url, 'suggestresults');
   }
 
@@ -268,7 +268,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     }
     $rootScope.$emit('fullTextSearch', $scope.search, $scope.searchType, $scope.geobias);
 
-    var url = $scope.searchType === 'FINE' ? '/search' : '/search/coarse';
+    var url = $scope.searchType.toLowerCase() === 'fine' ? '/search' : '/search/coarse';
     getResults(url, 'searchresults');
   }
 
