@@ -33,7 +33,10 @@
         <form role="search">
           <div class="input">
             <input type="text" data-ng-model="search" class="form-control" ng-focus="onFocus($event)" ng-blur="onBlur($event)" ng-keydown="keyPressed($event)" placeholder="Search" />
-            <div class="aside">
+            <div class="aside geobias-{{geobias}}">
+              <a data-ng-click="switchGeobias(geobias)">
+                <span class="fa fa-location-arrow"></span>
+              </a>
               <a data-ng-click="switchType(searchType)">
                 <span class="label label-default label-searchType">{{searchType}}</span>
               </a>
