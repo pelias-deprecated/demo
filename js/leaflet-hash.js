@@ -56,6 +56,8 @@
 				return false;
 			} else {
 				var query = hash_obj.q ? hash_obj.q : null;
+				var searchType = hash_obj.t ? hash_obj.t : null;
+				var geoBias = hash_obj.gb ? hash_obj.gb : null;
 				var return_obj = {
 					center: new L.LatLng(lat, lon),
 					zoom: zoom
@@ -65,6 +67,14 @@
 						this.lastSearchQuery = query;
 					}
 					return_obj['q'] = query;
+				}
+				if ( searchType && this.lastSearchType != searchType ) {
+					this.lastSearchType = searchType;
+					return_obj['t'] = searchType;
+				}
+				if ( geoBias && this.lastGeoBias != geoBias ) {
+					this.lastGeoBias = geoBias;
+					return_obj['gb'] = geoBias;
 				}
 				return return_obj;
 			}
@@ -86,13 +96,17 @@
 		].join(",");
 
 		var query = this.lastSearchQuery ? "&q=" + this.lastSearchQuery : "";
-		return loc + query;
+		var searchType = this.lastSearchType ? "&t=" + this.lastSearchType : "";
+		var geoBias = this.lastGeoBias ? "&gb=" + this.lastGeoBias : "";
+		return loc + query + searchType + geoBias;
 	},
 
 	L.Hash.prototype = {
 		map: null,
 		lastHash: null,
 		lastSearchQuery: null,
+		lastSearchType: null,
+		lastGeoBias: null,
 
 		parseHash: L.Hash.parseHash,
 		formatHash: L.Hash.formatHash,
@@ -105,6 +119,8 @@
 			// reset the hash
 			this.lastHash = null;
 			this.lastSearchQuery = null;
+			this.lastSearchType = null;
+			this.lastGeoBias = null;
 			this.onHashChange();
 
 			if (!this.isListening) {
@@ -182,6 +198,14 @@
 			$(document).on("pelias:fullTextSearch", function(e){
 				if (that.lastSearchQuery != e.text) {
 					that.lastSearchQuery = e.text;
+					that.onMapMove();
+				}
+				if (that.lastSearchType != e.searchType) {
+					that.lastSearchType  = e.searchType;
+					that.onMapMove();
+				}
+				if (that.lastGeoBias != e.geoBias) {
+					that.lastGeoBias  = e.geoBias;
 					that.onMapMove();
 				}
 			});
