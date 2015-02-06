@@ -181,7 +181,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
         }
         $scope[resultkey].length = 0;
         $scope[resultkey] = data.features.map( function( res ){
-          res.htmltext = $sce.trustAsHtml(highlight( res.properties.text, $scope.search ));
+          res.htmltext = $sce.trustAsHtml(highlight( res.properties.text +', '+ res.properties.admin0, $scope.search ));
           res.icon = icon( res.properties.type || 'search' );
           res.type = res.properties.type;
           res.distance = computeDistance(res.geometry.coordinates);
@@ -264,7 +264,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     
     var url = $scope.searchType.toLowerCase() === 'fine' ? '/suggest' : '/suggest/coarse';
     getResults(url, 'suggestresults');
-    getResults(url, 'suggestresults', $scope.api_url2);
+    getResults(url, 'suggest2results', $scope.api_url2);
   }
 
   $scope.fullTextSearch = function(){
@@ -277,7 +277,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
     var url = $scope.searchType.toLowerCase() === 'fine' ? '/search' : '/search/coarse';
     getResults(url, 'searchresults');
-    getResults(url, 'suggestresults', $scope.api_url2);
+    getResults(url, 'suggest2results', $scope.api_url2);
   }
 
   $scope.$watch( 'search', function( input ){
