@@ -198,6 +198,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
   $scope.search = '';
   $scope.searchresults = [];
+  $scope.search2results= [];
   $scope.suggestresults = [];
   $scope.suggest2results = [];
   $scope.geobias = 'bbox';
@@ -253,7 +254,8 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $rootScope.$on( 'hideall', function( ev ){
     $scope.suggestresults = [];
     $scope.suggest2results = [];
-    $scope.searchresults = []
+    $scope.searchresults = [];
+    $scope.search2results= [];
   });
 
   $rootScope.$on( 'hidesuggest', function( ev ){
@@ -263,6 +265,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
   $rootScope.$on( 'hidesearch', function( ev ){
     $scope.searchresults = [];
+    $scope.search2results= [];
   });
 
   $scope.keyPressed = function(ev) {
@@ -305,7 +308,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
     var url = $scope.searchType.toLowerCase() === 'fine' ? '/search' : '/search/coarse';
     getResults(url, 'searchresults');
-    getResults(url, 'suggest2results', $scope.api_url2);
+    getResults(url, 'search2results', $scope.api_url2);
   }
 
   $scope.$watch( 'search', function( input ){
