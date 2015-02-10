@@ -228,7 +228,6 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   };
 
   $scope.switchGeobias = function(geobias) {
-    console.log(geobias)
     if (geobias === 'bbox') {
       $scope.setGeobias('loc');
     } else if (geobias === 'loc') {
