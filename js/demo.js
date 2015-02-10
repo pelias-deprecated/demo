@@ -224,6 +224,8 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       $scope.geobias = 'off';
       $scope.geobiasClass = 'fa-globe';
       $scope.geobiasInfo = 'no location information';
+    } else {
+      $scope.switchGeobias();
     }
   };
 
@@ -234,6 +236,8 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       $scope.setGeobias('off');
     } else if (geobias === 'off') {
       $scope.setGeobias('bbox');
+    } else {
+      $scope.setGeobias('off');
     }
     $rootScope.$emit( 'hideall' );
     $scope.fullTextSearch();
