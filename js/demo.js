@@ -155,18 +155,18 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       size: 10
     }
 
-    if ($scope.geobias === 'on') {
+    if ($scope.geobias === 'bbox') {
       var bounds = map.getBounds();
       var bbox = [];
       bbox.push(bounds._northEast.lat);
       bbox.push(bounds._northEast.lng);
       bbox.push(bounds._southWest.lat);
       bbox.push(bounds._southWest.lng);
-
+      params.bbox= bbox.length === 4  ? bbox.join(',') : '';
+    } else if ($scope.geobias === 'loc') {
       params.lat = $rootScope.geobase ? $rootScope.geobase.lat : 0;
       params.lon = $rootScope.geobase ? $rootScope.geobase.lon : 0;
       params.zoom= $rootScope.geobase ? $rootScope.geobase.zoom : 12;
-      params.bbox= bbox.length === 4  ? bbox.join(',') : '';
     }
 
     $http({
@@ -199,7 +199,9 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.search = '';
   $scope.searchresults = [];
   $scope.suggestresults = [];
-  $scope.geobias = 'on';
+  $scope.geobias = 'bbox';
+  $scope.geobiasClass = 'fa-th';
+  $scope.geobiasInfo = 'the view port/ bounding box';
   $scope.searchType = 'fine';
   $scope.api_url = '//pelias.mapzen.com';
 
@@ -209,8 +211,31 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     $scope.fullTextSearch();
   };
 
+  $scope.setGeobias = function(geobias) {
+    if (geobias === 'bbox') {
+      $scope.geobias = 'bbox';
+      $scope.geobiasClass = 'fa-th';
+      $scope.geobiasInfo = 'the view port/ bounding box';
+    } else if (geobias === 'loc') {
+      $scope.geobias = 'loc';
+      $scope.geobiasClass = 'fa-location-arrow';
+      $scope.geobiasInfo = 'the lat/lon/zoom (center of the screen)';
+    } else if (geobias === 'off') {
+      $scope.geobias = 'off';
+      $scope.geobiasClass = 'fa-globe';
+      $scope.geobiasInfo = 'no location information';
+    }
+  };
+
   $scope.switchGeobias = function(geobias) {
-    $scope.geobias = geobias === 'on' ? 'off' : 'on';
+    console.log(geobias)
+    if (geobias === 'bbox') {
+      $scope.setGeobias('loc');
+    } else if (geobias === 'loc') {
+      $scope.setGeobias('off');
+    } else if (geobias === 'off') {
+      $scope.setGeobias('bbox');
+    }
     $rootScope.$emit( 'hideall' );
     $scope.fullTextSearch();
   };
@@ -291,6 +316,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   var hash_geobias  = hash_params ? hash_params.gb : false;
   if (hash_geobias){
     $scope.geobias = hash_geobias;
+    $scope.setGeobias(hash_geobias);
     $scope.keyPressed({ 'which': 13});
   }
 
