@@ -163,12 +163,15 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       bbox.push(bounds._southWest.lat);
       bbox.push(bounds._southWest.lng);
       params.bbox= bbox.length === 4  ? bbox.join(',') : '';
-    } else if ($scope.geobias === 'loc') {
+    } 
+
+    // for suggester to work, you need lat/lon even if geobias=bbox
+    if ($scope.geobias === 'bbox' || $scope.geobias === 'loc') {
       params.lat = $rootScope.geobase ? $rootScope.geobase.lat : 0;
       params.lon = $rootScope.geobase ? $rootScope.geobase.lon : 0;
       params.zoom= $rootScope.geobase ? $rootScope.geobase.zoom : 12;
     }
-
+    
     $http({
       url: $scope.api_url+url,
       method: 'GET',
