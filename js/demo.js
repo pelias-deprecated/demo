@@ -227,13 +227,11 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       $scope.geobias = 'loc';
       $scope.geobiasClass = 'fa-location-arrow';
       $scope.geobiasInfo = 'the lat/lon/zoom (center of the screen)';
-    } else if (geobias === 'off') {
+    } else {
       $scope.geobias = 'off';
       $scope.geobiasClass = 'fa-globe';
       $scope.geobiasInfo = 'no location information';
-    } else {
-      $scope.switchGeobias();
-    }
+    } 
   };
 
   $scope.switchGeobias = function(geobias) {
@@ -333,8 +331,10 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   if (hash_geobias){
     $scope.geobias = hash_geobias;
     $scope.setGeobias(hash_geobias);
+    $rootScope.$emit( 'hideall' );
+    $scope.fullTextSearch();
     $scope.keyPressed({ 'which': 13});
   }
-
+  
   $(document).on('new-location', $scope.suggest);
 })
