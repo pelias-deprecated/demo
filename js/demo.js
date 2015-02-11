@@ -317,25 +317,23 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   });
 
   // faking a search when query params are present
-  $(function(){
-    var hash_query  = hash_params ? hash_params.q : false;
-    if (hash_query){
-      $scope.search = hash_query
-      $scope.keyPressed({ 'which': 13});
-    }
-    var hash_search_type  = hash_params ? hash_params.t : false;
-    if (hash_search_type){
-      $scope.searchType = hash_search_type;
-      $scope.keyPressed({ 'which': 13});
-    }
-    var hash_geobias  = hash_params ? hash_params.gb : false;
-    if (hash_geobias){
-      $scope.geobias = hash_geobias;
-      $scope.setGeobias(hash_geobias);
-      $rootScope.$emit( 'hideall' );
-      $scope.fullTextSearch();
-      $scope.keyPressed({ 'which': 13});
-    }
-  });
+
+  var hash_query  = hash_params ? hash_params.q : false;
+  if (hash_query){
+    $scope.search = hash_query;
+  }
+  var hash_search_type  = hash_params ? hash_params.t : false;
+  if (hash_search_type){
+    $scope.searchType = hash_search_type;
+  }
+  var hash_geobias  = hash_params ? hash_params.gb : false;
+  if (hash_geobias){
+    $scope.geobias = hash_geobias;
+    $scope.setGeobias(hash_geobias);
+  }
+  if (hash_query || hash_search_type || hash_geobias) {
+    $scope.keyPressed({ 'which': 13});
+  }
+  
   $(document).on('new-location', $scope.suggest);
 })
