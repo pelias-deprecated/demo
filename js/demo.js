@@ -210,7 +210,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.searchType = 'fine';
 
   $scope.api_url = '//pelias.mapzen.com';
-  $scope.api_url2= '//pelias.dev.mapzen.com';
+  $scope.api_url2= '//pelias.stage.mapzen.com';
 
   $scope.switchType = function(type) {
     $scope.searchType = type === 'fine' ? 'coarse' : 'fine';
