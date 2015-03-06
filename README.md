@@ -1,7 +1,7 @@
 demo
 ====
 
-This is a simple angular app that uses mapzen's pelias api (https://pelias.mapzen.com) to demonstrate the following endpoints.
+This is a simple angular app that uses mapzen's pelias api (https://mapzen.com/pelias) to demonstrate the following endpoints.
 
 * /suggest
 * /search
