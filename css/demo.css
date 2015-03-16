@@ -15,6 +15,7 @@ body {
   position:absolute;
   margin:20px;
   width:350px;
+  z-index: 50;
 }
 
 #searchbar input {
