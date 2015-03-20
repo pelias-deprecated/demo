@@ -60,10 +60,10 @@ L.Control.Styles = L.Control.extend({
                 .on(link, 'click', function() {
                     var style_name = this.getAttribute('data-style_name');
                     var style_file = this.getAttribute('data-style_file');
-                    var layer = Tangram.leafletLayer({
-                        scene: style_file,
-                        attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram" target="_blank">Source Code</a>'
-                    });
+                    // var layer = Tangram.leafletLayer({
+                    //     scene: style_file,
+                    //     attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram" target="_blank">Source Code</a>'
+                    // });
 
                     // map.removeLayer(window.layer)
                     // window.layer = layer;
