@@ -8,7 +8,6 @@ L.Control.Styles = L.Control.extend({
         position: 'topleft',
         icon: 'glyphicon-picture glyphicon',
         styles: [
-            {'style_file': './styles/bricks.yaml', 'name': 'bricks'},
             {'style_file': './styles/default.yaml', 'name': 'default'},
             {'style_file': './styles/lego.yaml', 'name': 'lego'},
             {'style_file': './styles/patterns.yaml', 'name': 'patterns'},

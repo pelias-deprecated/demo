@@ -2,7 +2,6 @@ var app = angular.module('pelias', []);
 var hash_params = L.Hash.parseHash(location.hash);
 
 var styles = {
-  'bricks':'./styles/bricks.yaml',
   'default':'./styles/default.yaml',
   'lego':'./styles/lego.yaml',
   'patterns':'./styles/patterns.yaml',
