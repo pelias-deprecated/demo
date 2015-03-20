@@ -120,6 +120,10 @@ a {
   cursor: pointer;
 }
 
+.selected .glyphicon-search {
+  color: #62b1ef;
+}
+
 .aside em {
   -webkit-border-top-right-radius: 0px;
   -webkit-border-bottom-right-radius: 0px;

@@ -23,6 +23,7 @@
     <script type="text/javascript" src="js/leaflet-hash.js"></script>
     <script src="//rawgit.com/tangrams/tangram/master/dist/tangram.debug.js"></script>
     <script type="text/javascript" src="js/L.Control.Locate.js" ></script>
+    <script type="text/javascript" src="js/L.Control.Search.js" ></script>
     <script type="text/javascript" src="js/L.Control.Locations.js" ></script>
     <script type="text/javascript" src="js/L.Control.Styles.js" ></script>
     <script type="text/javascript" src="js/latlon.js"></script>
@@ -31,7 +32,7 @@
   <body>
       <div id="map"></div>
 
-      <section id="searchbar" data-ng-controller="SearchController">
+      <section id="searchbar" data-ng-controller="SearchController" style="display: none;">
         <form role="search">
           <div class="input">
             <input type="text" data-ng-model="search" class="form-control" ng-focus="onFocus($event)" ng-blur="onBlur($event)" ng-keydown="keyPressed($event)" placeholder="Search" />
