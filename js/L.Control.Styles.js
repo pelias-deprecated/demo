@@ -65,10 +65,10 @@ L.Control.Styles = L.Control.extend({
                         attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram" target="_blank">Source Code</a>'
                     });
 
+                    map.removeLayer(window.layer)
                     window.layer = layer;
                     var scene = layer.scene;
                     window.scene = scene;
-
                     layer.addTo(window.map);
                 })
         }
