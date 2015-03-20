@@ -58,6 +58,7 @@
 				var query = hash_obj.q ? hash_obj.q : null;
 				var searchType = hash_obj.t ? hash_obj.t : null;
 				var geoBias = hash_obj.gb ? hash_obj.gb : null;
+				var style = hash_obj.s ? hash_obj.s : null;
 				var return_obj = {
 					center: new L.LatLng(lat, lon),
 					zoom: zoom
@@ -75,6 +76,10 @@
 				if ( geoBias && this.lastGeoBias != geoBias ) {
 					this.lastGeoBias = geoBias;
 					return_obj['gb'] = geoBias;
+				}
+				if ( style && this.lastStyle != style ) {
+					this.lastStyle = style;
+					return_obj['s'] = style;
 				}
 				return return_obj;
 			}
@@ -98,7 +103,8 @@
 		var query = this.lastSearchQuery ? "&q=" + this.lastSearchQuery : "";
 		var searchType = this.lastSearchType ? "&t=" + this.lastSearchType : "";
 		var geoBias = this.lastGeoBias ? "&gb=" + this.lastGeoBias : "";
-		return loc + query + searchType + geoBias;
+		var style = this.lastStyle ? "&s=" + this.lastStyle : "";
+		return loc + query + searchType + geoBias + style;
 	},
 
 	L.Hash.prototype = {
@@ -107,6 +113,7 @@
 		lastSearchQuery: null,
 		lastSearchType: null,
 		lastGeoBias: null,
+		lastStyle: null,
 
 		parseHash: L.Hash.parseHash,
 		formatHash: L.Hash.formatHash,
@@ -121,6 +128,7 @@
 			this.lastSearchQuery = null;
 			this.lastSearchType = null;
 			this.lastGeoBias = null;
+			this.lastStyle = null;
 			this.onHashChange();
 
 			if (!this.isListening) {
@@ -208,6 +216,18 @@
 					that.lastGeoBias  = e.geoBias;
 					that.onMapMove();
 				}
+				if (that.lastStyle != e.style) {
+					that.lastStyle  = e.style;
+					that.onMapMove();
+				}
+			});
+
+			$(document).on("pelias:new-style", function(e) {
+				if (that.lastStyle != e.style) {
+					that.lastStyle  = e.style;
+					that.onMapMove();
+				}
+				window.location.reload();
 			});
 
 			if (HAS_HASHCHANGE) {

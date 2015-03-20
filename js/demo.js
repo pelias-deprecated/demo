@@ -1,6 +1,17 @@
 var app = angular.module('pelias', []);
 var hash_params = L.Hash.parseHash(location.hash);
 
+var styles = {
+  'bricks':'./styles/bricks.yaml',
+  'default':'./styles/default.yaml',
+  'lego':'./styles/lego.yaml',
+  'patterns':'./styles/patterns.yaml',
+  'sandbox':'./styles/sandbox.yaml',
+  'tron':'./styles/tron.yaml',
+  'wallpaper':'./styles/wallpaper.yaml',
+  'zebra':'./styles/zebra.yaml'
+}
+
 app.run(function($rootScope) {
   var hash_loc = hash_params ? hash_params : {'center': {'lat': 40.7259, 'lng': -73.9805}, 'zoom': 12};
   $rootScope.geobase = {
@@ -26,7 +37,15 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       maxBounds: L.latLngBounds(L.latLng(-80, -180), L.latLng(82, 180))
   });
   window.map = map;
-  var style_file = './styles/tron.yaml';
+  
+  var hash_style  = hash_params ? hash_params.s : false;
+  if (hash_style){
+    $scope.style = hash_style;
+  } else {
+    $scope.style = 'default';
+  }
+
+  var style_file = styles[$scope.style];
 
   var layer = Tangram.leafletLayer({
       scene: style_file,
@@ -94,12 +113,13 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     remove_markers();
   });
 
-  $rootScope.$on( 'fullTextSearch', function( ev, text, searchType, geoBias ){
+  $rootScope.$on( 'fullTextSearch', function( ev, text, searchType, geoBias, style ){
     $(document).trigger({
       'type': "pelias:fullTextSearch",
       'text' : text,
       'searchType' : searchType,
-      'geoBias': geoBias
+      'geoBias': geoBias,
+      'style': style
     });
   });
 
@@ -319,7 +339,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       $rootScope.$emit( 'hideall' );
       return;
     }
-    $rootScope.$emit('fullTextSearch', $scope.search, $scope.searchType, $scope.geobias);
+    $rootScope.$emit('fullTextSearch', $scope.search, $scope.searchType, $scope.geobias, $scope.style);
 
     var url = $scope.searchType.toLowerCase() === 'fine' ? '/search' : '/search/coarse';
     getResults(url, 'searchresults');
@@ -334,6 +354,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   if (hash_query){
     $scope.search = hash_query
     $scope.keyPressed({ 'which': 13});
+    $("#searchresults").addClass("smaller");
   }
   var hash_search_type  = hash_params ? hash_params.t : false;
   if (hash_search_type){

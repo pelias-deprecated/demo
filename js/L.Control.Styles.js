@@ -53,23 +53,29 @@ L.Control.Styles = L.Control.extend({
             var li = L.DomUtil.create('li', '', this._list);
             var link = L.DomUtil.create('a', '', li);
             link.setAttribute('data-style_file', $this.style_file);
-            link.setAttribute('data-name', $this.name);
+            link.setAttribute('data-style_name', $this.name);
             link.innerHTML = $this.name;
             L.DomEvent
                 .on(link, 'click', L.DomEvent.stopPropagation)
                 .on(link, 'click', L.DomEvent.preventDefault)
                 .on(link, 'click', function() {
+                    var style_name = this.getAttribute('data-style_name');
                     var style_file = this.getAttribute('data-style_file');
                     var layer = Tangram.leafletLayer({
                         scene: style_file,
                         attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram" target="_blank">Source Code</a>'
                     });
 
-                    map.removeLayer(window.layer)
-                    window.layer = layer;
-                    var scene = layer.scene;
-                    window.scene = scene;
-                    layer.addTo(window.map);
+                    // map.removeLayer(window.layer)
+                    // window.layer = layer;
+                    // var scene = layer.scene;
+                    // window.scene = scene;
+                    // layer.addTo(window.map);
+                    $(document).trigger({
+                      'type': "pelias:new-style",
+                      'style': style_name,
+                      'file' : style_file
+                    });
                 })
         }
 
