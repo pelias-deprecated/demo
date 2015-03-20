@@ -25,13 +25,33 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       center: [$rootScope.geobase.lat, $rootScope.geobase.lon],
       maxBounds: L.latLngBounds(L.latLng(-80, -180), L.latLng(82, 180))
   });
+  window.map = map;
+  var style_file = './styles/tron.yaml';
 
-  L.tileLayer('//{s}.tiles.mapbox.com/v3/randyme.i0568680/{z}/{x}/{y}.png', {
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      maxZoom: 18,
-      minZoom: 3,
-      noWrap: true
-  }).addTo(map);
+  var layer = Tangram.leafletLayer({
+      scene: style_file,
+      attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram" target="_blank">Source Code</a>'
+  });
+
+  window.layer = layer;
+  var scene = layer.scene;
+  window.scene = scene;
+
+  // Resize map to window
+  function resizeMap() {
+      document.getElementById('map').style.width = window.innerWidth + 'px';
+      document.getElementById('map').style.height = window.innerHeight + 'px';
+      map.invalidateSize(false);
+  }
+
+  window.addEventListener('resize', resizeMap);
+  resizeMap();
+
+  window.addEventListener('load', function () {
+      // Scene initialized
+      layer.addTo(window.map);
+  });
+
   new L.Control.Zoom({ position: 'topright' }).addTo(map);
   L.control.locate({ position: 'topright', keepCurrentZoomLevel: true }).addTo(map);
   L.control.locations({ position: 'topright', keepCurrentZoomLevel: true }).addTo(map);
@@ -202,7 +222,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.search = '';
   $scope.searchresults = [];
   $scope.suggestresults = [];
-  $scope.geobias = 'bbox';
+  $scope.geobias = 'off';
   $scope.geobiasClass = 'fa-th';
   $scope.geobiasInfo = 'the view port/ bounding box';
   $scope.searchType = 'fine';

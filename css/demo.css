@@ -9,6 +9,7 @@ body {
   width: 100%;
   position: absolute;
   background: #fff;
+  z-index:-2;
 }
 
 #searchbar {
@@ -93,6 +94,7 @@ ul.results li {
 
 ul.results li a {
   cursor: pointer;
+  color:#666;
 }
 
 .aside {
