@@ -423,6 +423,6 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
         scene.requestRedraw(); 
       }
-    }
+    });
   }
 })
