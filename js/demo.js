@@ -378,29 +378,48 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       
       var getBias = function(a) {
         var bias = 0;
+        var focal= [[16, 2], [20, 6]];
+
         if (a>0 && a<1) {
           bias = 100;
+          focal= [[18, 1.5], [20, 6]];
         } else if (a>1 && a<2) {
           bias = 200;
+          focal= [[18, 1], [20, 6]];
         } else if (a>3) {
           bias = 300;
+          focal= [[18, 0.5], [20, 6]];
         } else if (a<0 && a>-1) {
           bias = -100;
+          focal= [[18, 1.5], [20, 6]];
         } else if (a<-1 && a>-2) {
           bias = -200;
+          focal= [[18, 1], [20, 6]];
         } else if (a<-2) {
           bias = -300;
+          focal= [[18, 0.5], [20, 6]];
         }
-        return bias;
+        return { 
+          'bias': bias,
+          'focal': focal
+        };
       }
-      var x = getBias(accelerationX);
-      var y = getBias(accelerationY);
+      var x = getBias(accelerationX).bias;
+      var y = getBias(accelerationY).bias;
+      var f = getBias(accelerationX).focal;
+
       if (scene && scene.camera) {
         var vp = scene.camera.vanishing_point;
         if ([x,y].join(',') !== vp.join(',')) {
           scene.camera.vanishing_point = [x, y];
-          scene.requestRedraw(); 
         }
+
+        var fl = scene.camera.focal_length;
+        if (f.join(',') !== fl.join(',')) {
+          scene.camera.focal_length = f;
+        }
+
+        scene.requestRedraw(); 
       }
     }
   }
