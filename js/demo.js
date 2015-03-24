@@ -389,22 +389,22 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
         a = Math.round(a);
 
         if (a>0 && a<1) {
-          bias = 100;
+          bias = 10;
           focal= [[18, 1.5], [20, 6]];
         } else if (a>1 && a<2) {
-          bias = 200;
+          bias = 20;
           focal= [[18, 1], [20, 6]];
         } else if (a>3) {
-          bias = 300;
+          bias = 30;
           focal= [[18, 0.5], [20, 6]];
         } else if (a<0 && a>-1) {
-          bias = -100;
+          bias = -10;
           focal= [[18, 1.5], [20, 6]];
         } else if (a<-1 && a>-2) {
-          bias = -200;
+          bias = -20;
           focal= [[18, 1], [20, 6]];
         } else if (a<-2) {
-          bias = -300;
+          bias = -30;
           focal= [[18, 0.5], [20, 6]];
         }
         return { 
