@@ -378,6 +378,8 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       var getBias = function(a) {
         var bias = 0;
         var focal= [[16, 2], [20, 6]];
+        
+        a = Math.round(a);
 
         if (a>0 && a<1) {
           bias = 100;
