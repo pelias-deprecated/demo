@@ -227,7 +227,6 @@
 					that.lastStyle  = e.style;
 					that.onMapMove();
 				}
-				window.location.reload();
 			});
 
 			if (HAS_HASHCHANGE) {

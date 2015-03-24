@@ -70,6 +70,10 @@ L.Control.Styles = L.Control.extend({
                     // var scene = layer.scene;
                     // window.scene = scene;
                     // layer.addTo(window.map);
+
+                    window.layer.scene.config_source = style_file;
+                    window.layer.scene.reload();
+
                     $(document).trigger({
                       'type': "pelias:new-style",
                       'style': style_name,
