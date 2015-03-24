@@ -418,10 +418,10 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
           scene.camera.vanishing_point = [x, y];
         }
 
-        var fl = scene.camera.focal_length;
-        if (f.join(',') !== fl.join(',')) {
-          scene.camera.focal_length = f;
-        }
+        // var fl = scene.camera.focal_length;
+        // if (f.join(',') !== fl.join(',')) {
+        //   scene.camera.focal_length = f;
+        // }
 
         scene.requestRedraw(); 
       }
