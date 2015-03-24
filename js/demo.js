@@ -425,18 +425,17 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
           for (var j=vp[1]; j!=y; vp[1]>y ? j-- : j++) {
             if ([x,y].join(',') !== [i,j].join(',')) {
               scene.camera.vanishing_point = [x, y];
+              scene.requestRedraw();
             }
 
             // var fl = scene.camera.focal_length;
             // if (f.join(',') !== fl.join(',')) {
             //   scene.camera.focal_length = f;
-            // }
-
-            scene.requestRedraw();     
+            // }     
           }
         }
-        window.tilting = false;
       }
+      window.tilting = false;
     });
   }
 })
