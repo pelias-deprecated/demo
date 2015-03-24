@@ -421,8 +421,8 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
       if (scene && scene.camera) {
         var vp = scene.camera.vanishing_point;
-        for( var i=vp[0]; i!=x; i = (vp[0]>x ? i-10 : i+10)) {
-          for (var j=vp[1]; j!=y; j=(vp[1]>y ? j-10 : j+10)) {
+        for( var i=vp[0]; i!=x; (i>x ? i-- : i++)) {
+          for (var j=vp[1]; j!=y; (j>y ? j-- : j++)) {
             if ([x,y].join(',') !== [i,j].join(',')) {
               scene.camera.vanishing_point = [i, j];
               scene.requestRedraw();
