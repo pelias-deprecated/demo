@@ -371,10 +371,9 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $(document).on('new-location', $scope.suggest);
 
   if (window.DeviceOrientationEvent) {
-    window.ondevicemotion = function(event) {  
-      var accelerationX = event.accelerationIncludingGravity.x;  
-      var accelerationY = event.accelerationIncludingGravity.y;  
-      var accelerationZ = event.accelerationIncludingGravity.z;  
+    window.addEventListener('deviceorientation', function(event) {
+      var tiltLR = event.gamma;  
+      var tiltFB = event.beta;  
       
       var getBias = function(a) {
         var bias = 0;
@@ -404,10 +403,10 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
           'focal': focal
         };
       }
-      var x = getBias(accelerationX).bias;
-      var y = getBias(accelerationY).bias;
-      var fx= getBias(accelerationX).focal;
-      var fy= getBias(accelerationY).focal;
+      var x = getBias(tiltLR).bias;
+      var y = getBias(tiltFB).bias;
+      var fx= getBias(tiltLR).focal;
+      var fy= getBias(tiltFB).focal;
 
       var f = fx[0][1] < fy[0][1] ? fx : fy;
 
