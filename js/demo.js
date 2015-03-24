@@ -395,11 +395,12 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       }
       var x = getBias(accelerationX);
       var y = getBias(accelerationY);
-
-      var vp = scene.camera.vanishing_point;
-      if ([x,y].join(',') !== vp.join(',')) {
-        scene.camera.vanishing_point = [x, y];
-        scene.requestRedraw(); 
+      if (scene && scene.camera) {
+        var vp = scene.camera.vanishing_point;
+        if ([x,y].join(',') !== vp.join(',')) {
+          scene.camera.vanishing_point = [x, y];
+          scene.requestRedraw(); 
+        }
       }
     }
   }
