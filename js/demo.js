@@ -370,8 +370,15 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
   $(document).on('new-location', $scope.suggest);
 
+  window.tilting = false;
+
   if (window.DeviceOrientationEvent) {
     window.addEventListener('deviceorientation', function(event) {
+      if (window.tilting) {
+        return true;
+      }
+      window.tilting = true;
+
       var tiltLR = event.gamma;  
       var tiltFB = event.beta;  
       
@@ -414,16 +421,21 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
       if (scene && scene.camera) {
         var vp = scene.camera.vanishing_point;
-        if ([x,y].join(',') !== vp.join(',')) {
-          scene.camera.vanishing_point = [x, y];
+        for( var i=vp[0]; i!=x; vp[0]>x ? i-- : i++) {
+          for (var j=vp[1]; j!=y; vp[1]>y ? j-- : j++) {
+            if ([x,y].join(',') !== [i,j].join(',')) {
+              scene.camera.vanishing_point = [x, y];
+            }
+
+            // var fl = scene.camera.focal_length;
+            // if (f.join(',') !== fl.join(',')) {
+            //   scene.camera.focal_length = f;
+            // }
+
+            scene.requestRedraw();     
+          }
         }
-
-        // var fl = scene.camera.focal_length;
-        // if (f.join(',') !== fl.join(',')) {
-        //   scene.camera.focal_length = f;
-        // }
-
-        scene.requestRedraw(); 
+        window.tilting = false;
       }
     });
   }
