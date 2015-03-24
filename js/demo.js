@@ -369,4 +369,15 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   }
 
   $(document).on('new-location', $scope.suggest);
+
+  if (window.DeviceOrientationEvent) {
+    window.ondevicemotion = function(event) {  
+      var accelerationX = event.accelerationIncludingGravity.x;  
+      var accelerationY = event.accelerationIncludingGravity.y;  
+      var accelerationZ = event.accelerationIncludingGravity.z;  
+
+      scene.camera.vanishing_point = [scene.camera.vanishing_point[0] + accelerationX, scene.camera.vanishing_point[1] + accelerationY];
+      scene.requestRedraw();
+    }
+  }
 })
