@@ -409,7 +409,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       var fx= getBias(accelerationX).focal;
       var fy= getBias(accelerationY).focal;
 
-      var f = fx[0][1] > fy[0][1] ? fx : fy;
+      var f = fx[0][1] < fy[0][1] ? fx : fy;
 
       if (scene && scene.camera) {
         var vp = scene.camera.vanishing_point;
