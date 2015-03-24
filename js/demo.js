@@ -375,8 +375,26 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       var accelerationX = event.accelerationIncludingGravity.x;  
       var accelerationY = event.accelerationIncludingGravity.y;  
       var accelerationZ = event.accelerationIncludingGravity.z;  
-      var x = accelerationX > 0 ? 300 : ((accelerationX < 0) ? -300 : 0);
-      var y = accelerationY > 0 ? 300 : ((accelerationY < 0) ? -300 : 0);
+      
+      var getBias = function(a) {
+        var bias = 0;
+        if (a>0 && a<1) {
+          bias = 100;
+        } else if (a>1 && a<2) {
+          bias = 200;
+        } else if (a>3) {
+          bias = 300;
+        } else if (a<0 && a>-1) {
+          bias = -100;
+        } else if (a<-1 && a>-2) {
+          bias = -200;
+        } else if (a<-2) {
+          bias = -300;
+        }
+        return bias;
+      }
+      var x = getBias(accelerationX);
+      var y = getBias(accelerationY);
 
       var vp = scene.camera.vanishing_point;
       if ([x,y].join(',') !== vp.join(',')) {
