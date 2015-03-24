@@ -375,14 +375,13 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       var accelerationX = event.accelerationIncludingGravity.x;  
       var accelerationY = event.accelerationIncludingGravity.y;  
       var accelerationZ = event.accelerationIncludingGravity.z;  
+      var x = accelerationX > 0 ? 300 : ((accelerationX < 0) ? -300 : 0);
+      var y = accelerationY > 0 ? 300 : ((accelerationY < 0) ? -300 : 0);
 
       var vp = scene.camera.vanishing_point;
-      if (window.last_vanishing_point.join(',') === vp.join(',')) {
-        var x = accelerationX > 0 ? 300 : ((accelerationX < 0) ? -300 : 0);
-        var y = accelerationY > 0 ? 300 : ((accelerationY < 0) ? -300 : 0);
+      if ([x,y].join(',') !== vp.join(',')) {
         scene.camera.vanishing_point = [x, y];
-        scene.requestRedraw();  
-        window.last_vanishing_point = scene.camera.vanishing_point;
+        scene.requestRedraw(); 
       }
     }
   }
