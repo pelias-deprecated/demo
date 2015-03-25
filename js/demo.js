@@ -387,26 +387,26 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
         var focal= [[16, 2], [20, 6]];
         
         a = Math.round(a);
-
-        if (a>0 && a<1) {
-          bias = 10;
-          focal= [[18, 1.5], [20, 6]];
-        } else if (a>1 && a<2) {
-          bias = 50;
-          focal= [[18, 1], [20, 6]];
-        } else if (a>3) {
-          bias = 100;
-          focal= [[18, 0.5], [20, 6]];
-        } else if (a<0 && a>-1) {
-          bias = -10;
-          focal= [[18, 1.5], [20, 6]];
-        } else if (a<-1 && a>-2) {
-          bias = -50;
-          focal= [[18, 1], [20, 6]];
-        } else if (a<-2) {
-          bias = -100;
-          focal= [[18, 0.5], [20, 6]];
-        }
+        bias = a * 100;
+        // if (a>0 && a<1) {
+        //   bias = 10;
+        //   focal= [[18, 1.5], [20, 6]];
+        // } else if (a>1 && a<2) {
+        //   bias = 50;
+        //   focal= [[18, 1], [20, 6]];
+        // } else if (a>3) {
+        //   bias = 100;
+        //   focal= [[18, 0.5], [20, 6]];
+        // } else if (a<0 && a>-1) {
+        //   bias = -10;
+        //   focal= [[18, 1.5], [20, 6]];
+        // } else if (a<-1 && a>-2) {
+        //   bias = -50;
+        //   focal= [[18, 1], [20, 6]];
+        // } else if (a<-2) {
+        //   bias = -100;
+        //   focal= [[18, 0.5], [20, 6]];
+        // }
         return { 
           'bias': bias,
           'focal': focal
