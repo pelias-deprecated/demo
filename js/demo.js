@@ -387,7 +387,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
         var focal= [[16, 2], [20, 6]];
         
         a = Math.round(a);
-        bias = a * 20;
+        bias = a * 10;
         // if (a>0 && a<1) {
         //   bias = 10;
         //   focal= [[18, 1.5], [20, 6]];
