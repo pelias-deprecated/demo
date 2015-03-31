@@ -394,7 +394,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
         };
       }
       var x = getBias(tiltLR).bias;
-      var y = getBias(tiltFB).bias;
+      var y = -getBias(tiltFB).bias;
       var fx= getBias(tiltLR).focal;
       var fy= getBias(tiltFB).focal;
 
