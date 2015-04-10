@@ -6,7 +6,8 @@ app.run(function($rootScope) {
   $rootScope.geobase = {
     'zoom': hash_loc.zoom,
     'lat' : hash_loc.center.lat,
-    'lon' : hash_loc.center.lng
+    'lon' : hash_loc.center.lng,
+    'locationProvided': hash_params
   }
   $(document).on('new-location', function(e){
     $rootScope.geobase = {
@@ -25,6 +26,13 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       center: [$rootScope.geobase.lat, $rootScope.geobase.lon],
       maxBounds: L.latLngBounds(L.latLng(-80, -180), L.latLng(82, 180))
   });
+
+  if(!$rootScope.geobase.locationProvided && navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function (pos){
+      var coords = pos.coords;
+      map.panTo(new L.LatLng(coords.latitude, coords.longitude));
+    });
+  }
 
   L.tileLayer('//{s}.tiles.mapbox.com/v3/randyme.i0568680/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
