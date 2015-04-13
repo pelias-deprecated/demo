@@ -26,6 +26,19 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       maxBounds: L.latLngBounds(L.latLng(-80, -180), L.latLng(82, 180))
   });
 
+  if(!L.Hash.parseHash(location.hash) && navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function (pos){
+      var coords = pos.coords;
+      map.panTo(new L.LatLng(coords.latitude, coords.longitude));
+      $(document).trigger({
+        type: 'new-location',
+        lat: coords.latitude,
+        lon: coords.longitude,
+        zoom: 12
+      });
+    });
+  }
+
   L.tileLayer('//{s}.tiles.mapbox.com/v3/randyme.i0568680/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
       maxZoom: 18,
