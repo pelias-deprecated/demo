@@ -6,8 +6,7 @@ app.run(function($rootScope) {
   $rootScope.geobase = {
     'zoom': hash_loc.zoom,
     'lat' : hash_loc.center.lat,
-    'lon' : hash_loc.center.lng,
-    'locationProvided': hash_params
+    'lon' : hash_loc.center.lng
   }
   $(document).on('new-location', function(e){
     $rootScope.geobase = {
@@ -27,10 +26,16 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       maxBounds: L.latLngBounds(L.latLng(-80, -180), L.latLng(82, 180))
   });
 
-  if(!$rootScope.geobase.locationProvided && navigator.geolocation){
+  if(!L.Hash.parseHash(location.hash) && navigator.geolocation){
     navigator.geolocation.getCurrentPosition(function (pos){
       var coords = pos.coords;
       map.panTo(new L.LatLng(coords.latitude, coords.longitude));
+      $(document).trigger({
+        type: 'new-location',
+        lat: coords.latitude,
+        lon: coords.longitude,
+        zoom: 12
+      });
     });
   }
 
