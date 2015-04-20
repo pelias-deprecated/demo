@@ -9,11 +9,15 @@ L.Control.Locations = L.Control.extend({
         position: 'topleft',
         icon: 'glyphicon-th-list glyphicon',
         locations: [
-            {'loc': [51.505, -0.124], 'zoom': 12, 'name': 'London'},
+            {'loc': [37.7792, -122.4186], 'zoom': 14, 'name': 'San Fran'},
             {'loc': [40.7259253, -73.9805603], 'zoom': 12, 'name': 'New York'},
-            {'loc': [48.858864, 2.346986], 'zoom': 12, 'name': 'Paris'},
             {'loc': [40.4127118, -3.7034225], 'zoom': 12, 'name': 'Madrid'},
+            {'loc': [51.505, -0.124], 'zoom': 12, 'name': 'London'},
+            {'loc': [48.8497, 2.3603], 'zoom': 12, 'name': 'Paris'},
+            {'loc': [52.5153, 13.3899], 'zoom': 14, 'name': 'Berlin'},
             {'loc': [28.6457035, 77.2356033], 'zoom': 12, 'name': 'Delhi'},
+            {'loc': [13.7432, 100.4998], 'zoom': 12, 'name': 'Bangkok'},
+            {'loc': [37.5448, 126.9738], 'zoom': 12, 'name': 'Seoul'},
             {'loc': [-37.8171749, 144.9632263], 'zoom': 14, 'name': 'Melbourne'},
             {'loc': [-41.2903189, 174.7790909], 'zoom': 15, 'name': 'Wellington'}
         ],
