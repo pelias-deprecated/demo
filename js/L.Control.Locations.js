@@ -9,7 +9,7 @@ L.Control.Locations = L.Control.extend({
         position: 'topleft',
         icon: 'glyphicon-th-list glyphicon',
         locations: [
-            {'loc': [37.7792, -122.4186], 'zoom': 14, 'name': 'San Fran'},
+            {'loc': [37.7792, -122.4186], 'zoom': 14, 'name': 'SF'},
             {'loc': [40.7259253, -73.9805603], 'zoom': 12, 'name': 'New York'},
             {'loc': [40.4127118, -3.7034225], 'zoom': 12, 'name': 'Madrid'},
             {'loc': [51.505, -0.124], 'zoom': 12, 'name': 'London'},
