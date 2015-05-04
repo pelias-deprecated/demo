@@ -152,9 +152,10 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       headers: { 'Accept': 'application/json' }
     }).success(function (data, status, headers, config) {
       if (data) {
-        var geo = data.features[0].geometry.coordinates;
+        var geo = data.features[0].geometry.coordinates.reverse();
         var txt = data.features[0].properties.text;
-        $rootScope.$emit( 'map.dropMarker', geo.reverse(), txt, 'star');
+        $rootScope.$emit( 'map.dropMarker', geo, txt, 'star');
+        $rootScope.$emit( 'map.setView', geo, $rootScope.geobase.zoom );
       } else { }
     })
   };
