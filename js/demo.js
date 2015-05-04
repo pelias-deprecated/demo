@@ -170,12 +170,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
     if ($scope.geobias === 'bbox') {
       var bounds = map.getBounds();
-      var bbox = [];
-      bbox.push(bounds._northEast.lat);
-      bbox.push(bounds._northEast.lng);
-      bbox.push(bounds._southWest.lat);
-      bbox.push(bounds._southWest.lng);
-      params.bbox= bbox.length === 4  ? bbox.join(',') : '';
+      params.bbox = bounds.toBBoxString();
     } 
 
     // for suggester to work, you need lat/lon even if geobias=bbox
