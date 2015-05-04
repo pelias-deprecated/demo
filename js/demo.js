@@ -22,8 +22,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   var map = L.map('map', {
       zoom: $rootScope.geobase.zoom,
       zoomControl: false,
-      center: [$rootScope.geobase.lat, $rootScope.geobase.lon],
-      maxBounds: L.latLngBounds(L.latLng(-80, -180), L.latLng(82, 180))
+      center: [$rootScope.geobase.lat, $rootScope.geobase.lon]
   });
 
   if(!L.Hash.parseHash(location.hash) && navigator.geolocation){
@@ -42,8 +41,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   L.tileLayer('//{s}.tiles.mapbox.com/v3/randyme.i0568680/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://www.openstreetmap.org/copyright">ODbL</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
       maxZoom: 18,
-      minZoom: 3,
-      noWrap: true
+      minZoom: 3
   }).addTo(map);
   new L.Control.Zoom({ position: 'topright' }).addTo(map);
   L.control.locate({ position: 'topright', keepCurrentZoomLevel: true }).addTo(map);
