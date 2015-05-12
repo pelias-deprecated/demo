@@ -10,7 +10,14 @@ L.Control.Styles = L.Control.extend({
         styles: [
             {'style_file': 'https://tangrams.github.io/carousel/daynight.yaml', 'name': 'daynight'},
             {'style_file': 'https://tangrams.github.io/carousel/halftone.yaml', 'name': 'halftone'},
-            {'style_file': 'https://tangrams.github.io/carousel/traditional.yaml', 'name': 'traditional'}
+            {'style_file': 'https://tangrams.github.io/carousel/traditional.yaml', 'name': 'traditional'},
+            {'style_file': 'https://tangrams.github.io/tangram-sandbox/styles/crosshatch.yaml', 'name': 'crosshatch'},
+            {'style_file': 'https://tangrams.github.io/tangram-sandbox/styles/default.yaml', 'name': 'default'},
+            {'style_file': 'https://tangrams.github.io/tangram-sandbox/styles/lego.yaml', 'name': 'lego'},
+            {'style_file': 'https://tangrams.github.io/tangram-sandbox/styles/matrix.yaml', 'name': 'matrix'},
+            {'style_file': 'https://tangrams.github.io/tangram-sandbox/styles/nursery.yaml', 'name': 'nursery'},
+            {'style_file': 'https://tangrams.github.io/tangram-sandbox/styles/patterns.yaml', 'name': 'patterns'},
+            {'style_file': 'https://tangrams.github.io/tangram-sandbox/styles/tron.yaml', 'name': 'tron'}
         ],
         strings: {
             title: "Show me other map styles"
