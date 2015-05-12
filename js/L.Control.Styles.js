@@ -7,6 +7,7 @@ L.Control.Styles = L.Control.extend({
     options: {
         position: 'topleft',
         icon: 'fa fa-heart',
+        play: true,
         styles: [
             {'style_file': 'https://tangrams.github.io/carousel/daynight.yaml', 'name': 'daynight'},
             {'style_file': 'https://tangrams.github.io/carousel/halftone.yaml', 'name': 'halftone'},
@@ -32,6 +33,11 @@ L.Control.Styles = L.Control.extend({
                 this.options[i] = options[i];
             }
         }
+    },
+
+    switchStyle: function (style_file) {
+      window.layer.scene.config_source = style_file;
+      window.layer.scene.reload();
     },
 
     onAdd: function (map) {
@@ -63,19 +69,7 @@ L.Control.Styles = L.Control.extend({
                 .on(link, 'click', function() {
                     var style_name = this.getAttribute('data-style_name');
                     var style_file = this.getAttribute('data-style_file');
-                    // var layer = Tangram.leafletLayer({
-                    //     scene: style_file,
-                    //     attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram" target="_blank">Source Code</a>'
-                    // });
-
-                    // map.removeLayer(window.layer)
-                    // window.layer = layer;
-                    // var scene = layer.scene;
-                    // window.scene = scene;
-                    // layer.addTo(window.map);
-
-                    window.layer.scene.config_source = style_file;
-                    window.layer.scene.reload();
+                    self.switchStyle(style_file);
                 })
         }
 
@@ -83,14 +77,39 @@ L.Control.Styles = L.Control.extend({
             .on(this._link, 'click', L.DomEvent.stopPropagation)
             .on(this._link, 'click', L.DomEvent.preventDefault)
             .on(this._link, 'click', function() {
+                var classList = self._icon.classList;
+
                 if (!self._show) {
+                    if (!self.options.play) {
+                      self._show = true;
+                    }
+
+                    if (self.options.play && !self._animate && classList.contains('fa-play')) {
+                      // animate scenes
+                      self._animate = true;
+                      self._show = true;
+                      var i=0;
+                      window.style_timer = window.setInterval(function(){
+                        // console.log(i)
+                        i=i+1;
+                        if (i==self.options.styles.length) {
+                          i=0;
+                        }
+                        self.switchStyle(self.options.styles[i].style_file);
+                      }, 2500);
+                    } 
                     L.DomUtil.addClasses(self._container, "expanded");
-                    L.DomUtil.removeClasses(self._list, "hidden");
-                    self._show = true;  
+                    L.DomUtil.addClasses(self._icon, "fa-play fa-close")
+                    L.DomUtil.removeClasses(self._icon, "fa-heart");
+                    L.DomUtil.removeClasses(self._list, "hidden"); 
                 } else {
                     L.DomUtil.removeClasses(self._container, "expanded");
+                    L.DomUtil.addClasses(self._icon, "fa-heart");
+                    L.DomUtil.removeClasses(self._icon, "fa-play");
                     L.DomUtil.addClasses(self._list, "hidden");
                     self._show = false;
+                    self._animate = false;
+                    window.clearTimeout(window.style_timer);
                 }
                 
             })
