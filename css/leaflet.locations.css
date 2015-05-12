@@ -10,3 +10,7 @@ ul.locations.shortcuts li a, .leaflet-control-locations.expanded .leaflet-bar-pa
 	border-radius: 0px;
 	cursor:pointer;
 }
+
+ul.locations.shortcuts.hidden {
+	display: none;
+}

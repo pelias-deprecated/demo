@@ -7,7 +7,7 @@ This plugin adds a bunch of custom locations to your leaflet map as a drop down 
 L.Control.Locations = L.Control.extend({
     options: {
         position: 'topleft',
-        icon: 'glyphicon-th-list glyphicon',
+        icon: 'fa fa-map-marker',
         locations: [
             {'loc': [37.7792, -122.4186], 'zoom': 14, 'name': 'SF'},
             {'loc': [40.7259253, -73.9805603], 'zoom': 12, 'name': 'New York'},
@@ -49,7 +49,7 @@ L.Control.Locations = L.Control.extend({
         this._link = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single', container);
         this._link.href = '#';
         this._link.title = this.options.strings.title;
-        this._icon = L.DomUtil.create('i', this.options.icon, this._link);
+        this._icon = L.DomUtil.create('span', this.options.icon, this._link);
         this._list = L.DomUtil.create('ul', 'locations shortcuts hidden', container);
         
         for (var i=0; i<this.options.locations.length; i++) {

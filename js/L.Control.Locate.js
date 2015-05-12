@@ -38,8 +38,8 @@ L.Control.Locate = L.Control.extend({
             //color: '#FFA500',
             //fillColor: '#FFB000'
         },
-        icon: 'fa fa-map-marker',  // fa-location-arrow or fa-map-marker
-        iconLoading: 'fa fa-spinner fa-spin',
+        icon: 'fa fa-location-arrow',  // fa-location-arrow or fa-map-marker
+        iconLoading: 'fa fa-refresh fa-spin',
         circlePadding: [0, 0],
         metric: true,
         onLocationError: function(err) {
