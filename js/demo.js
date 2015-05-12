@@ -6,6 +6,9 @@ var layer = Tangram.leafletLayer({
     attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/" target="_blank">Mapzen</a>'
 }).addTo(map);
 
+// set up hash
+var hash = new L.Hash(map);
+
 // add controls
 new L.Control.Zoom({ position: 'topright' }).addTo(map);
 L.control.locate({ position: 'topright', keepCurrentZoomLevel: true }).addTo(map);

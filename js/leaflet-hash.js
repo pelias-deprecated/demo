@@ -13,41 +13,11 @@
 		}
 	};
 
-	L.Hash.triggerEvent = function(center, zoom) {
-		var precision = Math.max(0, Math.ceil(Math.log(zoom) / Math.LN2));
-		$(document).trigger({
-			'type': "new-location",
-			'zoom': zoom,
-			'lat' : center.lat.toFixed(precision),
-			'lon' : center.lng.toFixed(precision)
-		});
-	};
-
-	L.Hash.parseParams = function(str) {
-		if (!str || str == "") {
-			return undefined;
-		}
-		var pieces = str.split("&"), data = {}, i, parts;
-	    // process each query pair
-	    for (i = 0; i < pieces.length; i++) {
-	        parts = pieces[i].split("=");
-	        if (parts.length < 2) {
-	            parts.push("");
-	        }
-	        data[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
-	    }
-	    return data;
-	}
-
 	L.Hash.parseHash = function(hash) {
 		if(hash.indexOf('#') === 0) {
 			hash = hash.substr(1);
 		}
-		var hash_obj  = this.parseParams(hash);
-		if (!hash_obj) {
-			return false;
-		}
-		var args = hash_obj.loc.split(",");
+		var args = hash.split("/");
 		if (args.length == 3) {
 			var zoom = parseInt(args[0], 10),
 			lat = parseFloat(args[1]),
@@ -55,28 +25,10 @@
 			if (isNaN(zoom) || isNaN(lat) || isNaN(lon)) {
 				return false;
 			} else {
-				var query = hash_obj.q ? hash_obj.q : null;
-				var searchType = hash_obj.t ? hash_obj.t : null;
-				var geoBias = hash_obj.gb ? hash_obj.gb : null;
-				var return_obj = {
+				return {
 					center: new L.LatLng(lat, lon),
 					zoom: zoom
 				};
-				if (query) {
-					if (this.lastSearchQuery != query) {
-						this.lastSearchQuery = query;
-					}
-					return_obj['q'] = query;
-				}
-				if ( searchType && this.lastSearchType != searchType ) {
-					this.lastSearchType = searchType;
-					return_obj['t'] = searchType;
-				}
-				if ( geoBias && this.lastGeoBias != geoBias ) {
-					this.lastGeoBias = geoBias;
-					return_obj['gb'] = geoBias;
-				}
-				return return_obj;
 			}
 		} else {
 			return false;
@@ -88,39 +40,24 @@
 		    zoom = map.getZoom(),
 		    precision = Math.max(0, Math.ceil(Math.log(zoom) / Math.LN2));
 
-		this.triggerEvent(center, zoom);
-
-		var loc = "#loc=" + [zoom,
+		return "#" + [zoom,
 			center.lat.toFixed(precision),
 			center.lng.toFixed(precision)
-		].join(",");
-
-		var query = this.lastSearchQuery ? "&q=" + this.lastSearchQuery : "";
-		var searchType = this.lastSearchType ? "&t=" + this.lastSearchType : "";
-		var geoBias = this.lastGeoBias ? "&gb=" + this.lastGeoBias : "";
-		return loc + query + searchType + geoBias;
+		].join("/");
 	},
 
 	L.Hash.prototype = {
 		map: null,
 		lastHash: null,
-		lastSearchQuery: null,
-		lastSearchType: null,
-		lastGeoBias: null,
 
 		parseHash: L.Hash.parseHash,
 		formatHash: L.Hash.formatHash,
-		triggerEvent: L.Hash.triggerEvent,
-		parseParams: L.Hash.parseParams,
 
 		init: function(map) {
 			this.map = map;
 
 			// reset the hash
 			this.lastHash = null;
-			this.lastSearchQuery = null;
-			this.lastSearchType = null;
-			this.lastGeoBias = null;
 			this.onHashChange();
 
 			if (!this.isListening) {
@@ -165,8 +102,6 @@
 			if (parsed) {
 				this.movingMap = true;
 
-				this.triggerEvent(parsed.center, parsed.zoom);
-				
 				this.map.setView(parsed.center, parsed.zoom);
 
 				this.movingMap = false;
@@ -194,21 +129,6 @@
 		hashChangeInterval: null,
 		startListening: function() {
 			this.map.on("moveend", this.onMapMove, this);
-			var that = this;
-			$(document).on("pelias:fullTextSearch", function(e){
-				if (that.lastSearchQuery != e.text) {
-					that.lastSearchQuery = e.text;
-					that.onMapMove();
-				}
-				if (that.lastSearchType != e.searchType) {
-					that.lastSearchType  = e.searchType;
-					that.onMapMove();
-				}
-				if (that.lastGeoBias != e.geoBias) {
-					that.lastGeoBias  = e.geoBias;
-					that.onMapMove();
-				}
-			});
 
 			if (HAS_HASHCHANGE) {
 				L.DomEvent.addListener(window, "hashchange", this.onHashChange);
