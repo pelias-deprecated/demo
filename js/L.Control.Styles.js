@@ -55,7 +55,23 @@ L.Control.Styles = L.Control.extend({
         this._link.title = this.options.strings.title;
         this._icon = L.DomUtil.create('i', this.options.icon, this._link);
         this._list = L.DomUtil.create('ul', 'locations shortcuts hidden', container);
-        
+        this._play = function() {
+          // animate scenes
+          self._animate = true;
+          self._show = true;
+          var i=0;
+          L.DomUtil.removeClasses(self._icon, "fa-play");
+          L.DomUtil.addClasses(self._icon, "fa-refresh fa-spin");
+          window.style_timer = window.setInterval(function(){
+            // console.log(i)
+            i=i+1;
+            if (i==self.options.styles.length) {
+              i=0;
+            }
+            self.switchStyle(self.options.styles[i].style_file);
+          }, 2500);
+        };
+
         for (var i=0; i<this.options.styles.length; i++) {
             var $this = this.options.styles[i];
             var li = L.DomUtil.create('li', '', this._list);
@@ -85,20 +101,7 @@ L.Control.Styles = L.Control.extend({
                     }
 
                     if (self.options.play && !self._animate && classList.contains('fa-play')) {
-                      // animate scenes
-                      self._animate = true;
-                      self._show = true;
-                      var i=0;
-                      L.DomUtil.removeClasses(self._icon, "fa-play");
-                      L.DomUtil.addClasses(self._icon, "fa-refresh fa-spin");
-                      window.style_timer = window.setInterval(function(){
-                        // console.log(i)
-                        i=i+1;
-                        if (i==self.options.styles.length) {
-                          i=0;
-                        }
-                        self.switchStyle(self.options.styles[i].style_file);
-                      }, 2500);
+                      self._play()
                     } 
                     L.DomUtil.addClasses(self._container, "expanded");
                     if (!self._icon.classList.contains('fa-refresh')) {
@@ -119,6 +122,7 @@ L.Control.Styles = L.Control.extend({
             })
             .on(this._link, 'dblclick', L.DomEvent.stopPropagation);
 
+        self._play();
         return container;
     }
 });
