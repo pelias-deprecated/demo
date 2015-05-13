@@ -89,6 +89,8 @@ L.Control.Styles = L.Control.extend({
                       self._animate = true;
                       self._show = true;
                       var i=0;
+                      L.DomUtil.removeClasses(self._icon, "fa-play");
+                      L.DomUtil.addClasses(self._icon, "fa-refresh fa-spin");
                       window.style_timer = window.setInterval(function(){
                         // console.log(i)
                         i=i+1;
@@ -99,13 +101,15 @@ L.Control.Styles = L.Control.extend({
                       }, 2500);
                     } 
                     L.DomUtil.addClasses(self._container, "expanded");
-                    L.DomUtil.addClasses(self._icon, "fa-play fa-close")
+                    if (!self._icon.classList.contains('fa-refresh')) {
+                      L.DomUtil.addClasses(self._icon, "fa-play")
+                    }
                     L.DomUtil.removeClasses(self._icon, "fa-heart");
                     L.DomUtil.removeClasses(self._list, "hidden"); 
                 } else {
                     L.DomUtil.removeClasses(self._container, "expanded");
                     L.DomUtil.addClasses(self._icon, "fa-heart");
-                    L.DomUtil.removeClasses(self._icon, "fa-play");
+                    L.DomUtil.removeClasses(self._icon, "fa-play fa-refresh fa-spin");
                     L.DomUtil.addClasses(self._list, "hidden");
                     self._show = false;
                     self._animate = false;
