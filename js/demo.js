@@ -222,7 +222,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     }
     
     getResults('/suggest/', 'suggestresults');
-    getResults('/suggest/nearby/', 'suggest2results', $scope.api_url2);
+    getResults('/search/', 'suggest2results', $scope.api_url2);
   }
 
   $scope.fullTextSearch = function(){
