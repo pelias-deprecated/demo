@@ -22,12 +22,28 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   var map = L.map('map', {
       zoom: $rootScope.geobase.zoom,
       zoomControl: false,
-      center: [$rootScope.geobase.lat, $rootScope.geobase.lon]
+      center: [$rootScope.geobase.lat, $rootScope.geobase.lon],
+      maxBounds: L.latLngBounds(L.latLng(-80, -180), L.latLng(82, 180))
   });
+
+  if(!L.Hash.parseHash(location.hash) && navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function (pos){
+      var coords = pos.coords;
+      map.panTo(new L.LatLng(coords.latitude, coords.longitude));
+      $(document).trigger({
+        type: 'new-location',
+        lat: coords.latitude,
+        lon: coords.longitude,
+        zoom: 12
+      });
+    });
+  }
 
   L.tileLayer('//{s}.tiles.mapbox.com/v3/randyme.i0568680/{z}/{x}/{y}.png', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      maxZoom: 18
+      maxZoom: 18,
+      minZoom: 3,
+      noWrap: true
   }).addTo(map);
   new L.Control.Zoom({ position: 'topright' }).addTo(map);
   L.control.locate({ position: 'topright', keepCurrentZoomLevel: true }).addTo(map);
@@ -35,38 +51,48 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   // Set up the hash
   var hash = new L.Hash(map);
   var marker;
+  var markers = [];
+  var remove_markers = function(){
+
+    for (i=0; i<markers.length; i++) {
+      map.removeLayer(markers[i]);
+    }
+    markers = [];
+  };
 
   $rootScope.$on( 'map.setView', function( ev, geo, zoom ){
     map.setView( geo, zoom || 8 );
   });
 
   $rootScope.$on( 'map.dropMarker', function( ev, geo, text, icon_name ){
-    marker = new L.marker(geo, {icon: L.AwesomeMarkers.icon(
-      {icon: icon_name,  prefix: 'glyphicon', markerColor: 'green'}) }).bindPopup(text);
+    marker = new L.marker(geo).bindPopup(text);
     map.addLayer(marker);
+    markers.push(marker);
     marker.openPopup();
   });
 
   $rootScope.$on( 'map.dropGeoJson', function( ev, data ){
+    remove_markers();
     var geoJsonLayer = L.geoJson(data, {
       onEachFeature: function (feature, layer) {
+        markers.push(layer);
         layer.bindPopup(feature.properties.text);
       }
     }).addTo(map);
     geoJsonLayer.addData(data);
   });
-  
+
   $rootScope.$on( 'map.removeAllMarkers', function( ev, geo, text ){
-    if (marker) {
-      map.removeLayer(marker);
-    }
+    remove_markers();
   });
 
-  $rootScope.$on( 'fullTextSearch', function( ev, text ){
+  $rootScope.$on( 'fullTextSearch', function( ev, text, searchType, geoBias ){
     $(document).trigger({
       'type': "pelias:fullTextSearch",
-      'text' : text
-    });    
+      'text' : text,
+      'searchType' : searchType,
+      'geoBias': geoBias
+    });
   });
 
   map.on('click', function(e) {
@@ -102,7 +128,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   var resultSelected = function(search, geo, changeQuery) {
     $rootScope.$emit( 'map.removeAllMarkers' );
     if (changeQuery) {
-      $scope.search = search;  
+      $scope.search = search;
       $rootScope.$emit( 'hideall' );
     }
     $rootScope.$emit( 'map.setView', geo.reverse(), $rootScope.geobase.zoom );
@@ -124,30 +150,40 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
         lat: geo.lat,
         lon: geo.lon,
         zoom:$rootScope.geobase ? $rootScope.geobase.zoom : 12
-      }, 
+      },
       headers: { 'Accept': 'application/json' }
     }).success(function (data, status, headers, config) {
       if (data) {
         var geo = data.features[0].geometry.coordinates;
         var txt = data.features[0].properties.text;
-        $rootScope.$emit( 'map.setView', geo.reverse(), $rootScope.geobase.zoom );
-        $rootScope.$emit( 'map.dropMarker', geo, txt, 'star');
+        $rootScope.$emit( 'map.dropMarker', geo.reverse(), txt, 'star');
       } else { }
     })
   };
 
   var getResults = function(url, resultkey, api_url) {
+    var params = {
+      input: $scope.search,
+      // datasets: $scope.queryDatasets.join(','),
+      size: 10
+    }
+
+    if ($scope.geobias === 'bbox') {
+      var bounds = map.getBounds();
+      params.bbox = bounds.toBBoxString();
+    } 
+
+    // for suggester to work, you need lat/lon even if geobias=bbox
+    if ($scope.geobias === 'bbox' || $scope.geobias === 'loc') {
+      params.lat = $rootScope.geobase ? $rootScope.geobase.lat : 0;
+      params.lon = $rootScope.geobase ? $rootScope.geobase.lon : 0;
+      params.zoom= $rootScope.geobase ? $rootScope.geobase.zoom : 12;
+    }
+    
     $http({
       url: (api_url ? api_url : $scope.api_url)+url,
       method: 'GET',
-      params: {      
-        input: $scope.search,
-        // datasets: $scope.queryDatasets.join(','),
-        lat: $rootScope.geobase ? $rootScope.geobase.lat : 0,
-        lon: $rootScope.geobase ? $rootScope.geobase.lon : 0,
-        zoom:$rootScope.geobase ? $rootScope.geobase.zoom : 12,
-        size: 5
-      },
+      params: params,
       headers: { 'Accept': 'application/json' }
     }).success(function (data, status, headers, config) {
       if( data ){
@@ -158,6 +194,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
         $scope[resultkey] = data.features.map( function( res ){
           res.htmltext = $sce.trustAsHtml(highlight( res.properties.text, $scope.search ));
           res.icon = icon( res.properties.type || 'search' );
+          res.type = res.properties.type;
           res.distance = computeDistance(res.geometry.coordinates);
           return res;
         });
@@ -176,6 +213,49 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.suggest2results = [];
   $scope.api_url = '//pelias.dev.mapzen.com';
   $scope.api_url2= '//pelias.dev.mapzen.com';
+
+  $scope.geobias = 'bbox';
+  $scope.geobiasClass = 'fa-th';
+  $scope.geobiasInfo = 'the view port/ bounding box';
+  $scope.searchType = 'fine';
+
+  $scope.switchType = function(type) {
+    $scope.searchType = type === 'fine' ? 'coarse' : 'fine';
+    $rootScope.$emit( 'hideall' );
+    $scope.fullTextSearch();
+  };
+
+  $scope.setGeobias = function(geobias) {
+    if (geobias === 'bbox') {
+      $scope.geobias = 'bbox';
+      $scope.geobiasClass = 'fa-th';
+      $scope.geobiasInfo = 'the view port/ bounding box';
+    } else if (geobias === 'loc') {
+      $scope.geobias = 'loc';
+      $scope.geobiasClass = 'fa-location-arrow';
+      $scope.geobiasInfo = 'the lat/lon/zoom (center of the screen)';
+    } else if (geobias === 'off') {
+      $scope.geobias = 'off';
+      $scope.geobiasClass = 'fa-globe';
+      $scope.geobiasInfo = 'no location information';
+    } else {
+      $scope.switchGeobias();
+    }
+  };
+
+  $scope.switchGeobias = function(geobias) {
+    if (geobias === 'bbox') {
+      $scope.setGeobias('loc');
+    } else if (geobias === 'loc') {
+      $scope.setGeobias('off');
+    } else if (geobias === 'off') {
+      $scope.setGeobias('bbox');
+    } else {
+      $scope.setGeobias('off');
+    }
+    $rootScope.$emit( 'hideall' );
+    $scope.fullTextSearch();
+  };
 
   $scope.selectResult = function( result, changeQuery ){
     resultSelected(result.properties.text, result.geometry.coordinates, changeQuery)
@@ -215,24 +295,29 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   }
 
   $scope.suggest = function(){
-    
+
     if( !$scope.search.length ) {
       $rootScope.$emit( 'hideall' );
       return;
     }
     
-    getResults('/suggest/', 'suggestresults');
-    getResults('/search/', 'suggest2results', $scope.api_url2);
+    var url = $scope.searchType.toLowerCase() === 'fine' ? '/suggest' : '/suggest/coarse';
+    getResults(url, 'suggestresults');
+
+    url = $scope.searchType.toLowerCase() === 'fine' ? '/search' : '/search/coarse';
+    getResults(url, 'suggest2results', $scope.api_url2);
   }
 
   $scope.fullTextSearch = function(){
-    
+
     if( !$scope.search.length ) {
       $rootScope.$emit( 'hideall' );
       return;
     }
-    $rootScope.$emit('fullTextSearch', $scope.search);
-    getResults('/search', 'searchresults');
+    $rootScope.$emit('fullTextSearch', $scope.search, $scope.searchType, $scope.geobias);
+
+    var url = $scope.searchType.toLowerCase() === 'fine' ? '/search' : '/search/coarse';
+    getResults(url, 'searchresults');
   }
 
   $scope.$watch( 'search', function( input ){
@@ -245,6 +330,17 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     $scope.search = hash_query
     $scope.keyPressed({ 'which': 13});
   }
-    
+  var hash_search_type  = hash_params ? hash_params.t : false;
+  if (hash_search_type){
+    $scope.searchType = hash_search_type;
+    $scope.keyPressed({ 'which': 13});
+  }
+  var hash_geobias  = hash_params ? hash_params.gb : false;
+  if (hash_geobias){
+    $scope.geobias = hash_geobias;
+    $scope.setGeobias(hash_geobias);
+    $scope.keyPressed({ 'which': 13});
+  }
+
   $(document).on('new-location', $scope.suggest);
 })

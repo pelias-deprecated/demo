@@ -15,6 +15,7 @@ body {
   position:absolute;
   margin:20px;
   width:350px;
+  z-index: 50;
 }
 
 #searchbar input {
@@ -33,6 +34,22 @@ body {
   top: 5px;
   transition: none !important;
   -webkit-transition: none !important;
+}
+
+.aside .fa.geobias-class {
+  position: absolute;
+  top: 0px;
+  right: -45px;
+  font-size: 20px;
+  color: #428bca;
+  padding: 12px;
+  background: white;
+  border-radius: 5px;
+  width:44px;
+}
+
+.aside.geobias-off .fa.geobias-class {
+  color:lightgray;
 }
 
 input[type="text"] {
@@ -95,6 +112,17 @@ ul.results li a {
 
 .label {
   padding: 8px 5px;
+}
+
+.label-searchType {
+  position: absolute;
+  top: 10px;
+  right: 5px;
+  text-transform: uppercase;
+}
+
+a {
+  cursor: pointer;
 }
 
 .aside em {
