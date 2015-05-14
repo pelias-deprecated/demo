@@ -13,6 +13,7 @@ L.Control.Styles = L.Control.extend({
             {'style_file': 'https://tangrams.github.io/carousel/halftone.yaml', 'name': 'halftone'},
             {'style_file': 'https://tangrams.github.io/carousel/traditional.yaml', 'name': 'traditional'},
             {'style_file': 'https://tangrams.github.io/tangram-sandbox/styles/crosshatch.yaml', 'name': 'crosshatch'},
+            {'style_file': 'https://tangrams.github.io/tangram-sandbox/styles/pericoli.yaml', 'name': 'pericoli'},
             {'style_file': 'https://tangrams.github.io/tangram-sandbox/styles/default.yaml', 'name': 'default'},
             {'style_file': 'https://tangrams.github.io/tangram-sandbox/styles/lego.yaml', 'name': 'lego'},
             {'style_file': 'https://tangrams.github.io/tangram-sandbox/styles/matrix.yaml', 'name': 'matrix'},
