@@ -44,20 +44,8 @@
           </div>
         </form>
 
-        <ul id="suggestresults" class="results">
-          <li data-ng-repeat="result in suggestresults">
-            <a data-ng-click="selectResult(result, true)">
-              <i title="{{result.type}}" data-toggle="tooltip" class="glyphicon glyphicon-{{result.icon}}"></i>
-              <span data-ng-bind-html="result.htmltext"></span>
-              <div class="aside">
-                <em class="label label-info">{{result.distance}}km</em>
-              </div>
-            </a>
-          </li>
-        </ul>
-
         <ul id="searchresults" class="results">
-          <li data-ng-repeat="result in searchresults">
+          <li class="pelias-result" data-prop-id="{{result.properties.id}}" data-ng-repeat="result in searchresults">
             <a data-ng-click="selectResult(result)">
               <i title="{{result.type}}" data-toggle="tooltip" class="glyphicon glyphicon-{{result.icon}}"></i>
               <span data-ng-bind-html="result.htmltext"></span>

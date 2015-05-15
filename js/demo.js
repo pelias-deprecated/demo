@@ -51,23 +51,28 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   // Set up the hash
   var hash = new L.Hash(map);
   var marker;
-  var markers = [];
+  var markers = {};
   var remove_markers = function(){
-
-    for (i=0; i<markers.length; i++) {
-      map.removeLayer(markers[i]);
+  	for (key in markers) {
+      map.removeLayer(markers[key]);
+      delete markers[key];
     }
-    markers = [];
   };
 
   $rootScope.$on( 'map.setView', function( ev, geo, zoom ){
     map.setView( geo, zoom || 8 );
   });
 
-  $rootScope.$on( 'map.dropMarker', function( ev, geo, text, icon_name ){
+  $rootScope.$on( 'map.highlightMarker', function(ev, id) {
+  	marker = markers[id];
+  	marker.addTo(map)
+  	marker.openPopup();
+  })
+
+  $rootScope.$on( 'map.dropMarker', function( ev, geo, text, icon_name, id ){
     marker = new L.marker(geo).bindPopup(text);
     map.addLayer(marker);
-    markers.push(marker);
+    markers[id] = marker;
     marker.openPopup();
   });
 
@@ -75,10 +80,10 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     remove_markers();
     var geoJsonLayer = L.geoJson(data, {
       onEachFeature: function (feature, layer) {
-        markers.push(layer);
+        markers[feature.properties.id] = layer;
         layer.bindPopup(feature.properties.text);
       }
-    }).addTo(map);
+    });
     geoJsonLayer.addData(data);
   });
 
@@ -125,14 +130,24 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     return 'map-marker';
   };
 
-  var resultSelected = function(search, geo, changeQuery) {
-    $rootScope.$emit( 'map.removeAllMarkers' );
-    if (changeQuery) {
-      $scope.search = search;
-      $rootScope.$emit( 'hideall' );
+  var resultSelected = function(result, changeQuery) {
+    var search = result.properties.text;
+    var geo = result.geometry.coordinates;
+    var id = result.properties.id;
+
+    if (!id) {
+	    $rootScope.$emit( 'map.removeAllMarkers' );
+	    if (changeQuery) {
+	      $scope.search = search;
+	      $rootScope.$emit( 'hideall' );
+	    }
+	    
+	    $rootScope.$emit( 'map.setView', geo.reverse(), $rootScope.geobase.zoom );
+	    $rootScope.$emit( 'map.dropMarker', geo, search, 'search', id);
+    } else {
+    	$rootScope.$emit( 'map.highlightMarker', id);
     }
-    $rootScope.$emit( 'map.setView', geo.reverse(), $rootScope.geobase.zoom );
-    $rootScope.$emit( 'map.dropMarker', geo, search, 'search');
+    
   };
 
   var computeDistance = function(geo) {
@@ -156,7 +171,9 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
       if (data) {
         var geo = data.features[0].geometry.coordinates;
         var txt = data.features[0].properties.text;
-        $rootScope.$emit( 'map.dropMarker', geo.reverse(), txt, 'star');
+        var id = data.features[0].properties.id;
+
+        $rootScope.$emit( 'map.dropMarker', geo.reverse(), txt, 'star', id);
       } else { }
     })
   };
@@ -165,7 +182,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     var params = {
       input: $scope.search,
       // datasets: $scope.queryDatasets.join(','),
-      size: 10
+      size: 5
     }
 
     if ($scope.geobias === 'bbox') {
@@ -209,7 +226,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
   $scope.search = '';
   $scope.searchresults = [];
-  $scope.suggestresults = [];
+  
   $scope.geobias = 'bbox';
   $scope.geobiasClass = 'fa-th';
   $scope.geobiasInfo = 'the view port/ bounding box';
@@ -255,30 +272,83 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   };
 
   $scope.selectResult = function( result, changeQuery ){
-    resultSelected(result.properties.text, result.geometry.coordinates, changeQuery)
+    resultSelected(result, changeQuery)
   }
 
   $rootScope.$on( 'hideall', function( ev ){
-    $scope.suggestresults = [];
     $scope.searchresults = []
   });
 
-  $rootScope.$on( 'hidesuggest', function( ev ){
-    $scope.suggestresults = [];
-  });
+  $scope.keyPressed = function(e) {
+    var list = $("#searchresults").children();
+    var selected = $('.' + 'pelias-selected')[0];
+    var selectedPosition;
 
-  $rootScope.$on( 'hidesearch', function( ev ){
-    $scope.searchresults = [];
-  });
-
-  $scope.keyPressed = function(ev) {
-    if (ev.which == 13) {
-      $("#suggestresults").addClass("smaller");
-      $scope.fullTextSearch();
-    } else {
-      $("#suggestresults").removeClass("smaller");
-      $rootScope.$emit('hidesearch');
+    for (var i = 0; i < list.length; i++) {
+      if(list[i] === selected){
+        selectedPosition = i;
+        break;
+      }
     }
+    
+    // TODO cleanup
+    switch(e.keyCode) {
+      // 13 = enter
+      case 13:
+        if(selected){
+          var id = $(selected).data('prop-id');
+          $rootScope.$emit( 'map.highlightMarker', id);
+        } else {
+          // perform a full text search on enter
+          // var text = (e.target || e.srcElement).value;
+          // this.search(text);
+        }
+        L.DomEvent.preventDefault(e);
+        break;
+      // 38 = up arrow
+      case 38:
+        if(selected){
+          L.DomUtil.removeClass(selected, 'pelias-selected');
+        }
+
+        var previousItem = list[selectedPosition-1];
+
+        if(selected && previousItem) {
+          L.DomUtil.addClass(previousItem, 'pelias-selected');
+          var id = $(previousItem).data('prop-id');
+          $rootScope.$emit( 'map.highlightMarker', id);
+        } else {
+          var elem = list[list.length-1];
+          var id = $(elem).data('prop-id');
+          L.DomUtil.addClass(elem, 'pelias-selected');
+          $rootScope.$emit( 'map.highlightMarker', id);
+        }
+        L.DomEvent.preventDefault(e);
+        break;
+      // 40 = down arrow
+      case 40:
+        if(selected){
+          L.DomUtil.removeClass(selected, 'pelias-selected');
+        }
+
+        var nextItem = list[selectedPosition+1];
+        
+        if(selected && nextItem) {
+          L.DomUtil.addClass(nextItem, 'pelias-selected');
+          var id = $(nextItem).data('prop-id');
+          $rootScope.$emit( 'map.highlightMarker', id);
+        } else {
+          var elem = list[list.length-1];
+          var id = $(elem).data('prop-id');
+          L.DomUtil.addClass(list[0], 'pelias-selected');
+          $rootScope.$emit( 'map.highlightMarker', id);
+        }
+        L.DomEvent.preventDefault(e);
+        break;
+      // all other keys
+      default: 
+        break;
+    } 
   }
 
   $scope.onFocus = function(ev) {
@@ -287,17 +357,6 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
 
   $scope.onBlur = function(ev) {
     // $("#searchresults").addClass("smaller");
-  }
-
-  $scope.suggest = function(){
-
-    if( !$scope.search.length ) {
-      $rootScope.$emit( 'hideall' );
-      return;
-    }
-
-    var url = $scope.searchType.toLowerCase() === 'fine' ? '/suggest' : '/suggest/coarse';
-    getResults(url, 'suggestresults');
   }
 
   $scope.fullTextSearch = function(){
@@ -313,7 +372,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   }
 
   $scope.$watch( 'search', function( input ){
-    $scope.suggest();
+    $scope.fullTextSearch();
   });
 
   // faking a search when query params are present
@@ -334,5 +393,4 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
     $scope.keyPressed({ 'which': 13});
   }
 
-  $(document).on('new-location', $scope.suggest);
 })

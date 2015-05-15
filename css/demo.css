@@ -65,7 +65,7 @@ input[type="text"].focus {
 
 ul.results {
   list-style: none;
-  padding: 0px 5px;
+  padding:0px;
   background: white;
   margin: 2px 0;
   max-height: 300px;
@@ -82,13 +82,19 @@ ul.results.smaller {
 ul.results li {
   position:relative;
   margin: 0;
-  padding: 0;
+  padding: 0 5px;
   display: block;
   line-height: 40px;
   border-bottom: solid 1px #ddd;
   clear: both;
   height: 40px;
   overflow: hidden;
+}
+
+ul.results li.pelias-selected,
+ul.results li:hover {
+  background: #dee;
+  color:#fff;
 }
 
 ul.results li a {
@@ -98,9 +104,8 @@ ul.results li a {
 .aside {
   position:absolute;
   top:0px;
-  right:0px;
+  right:5px;
   padding: 0 0 0 5px;
-  background: white;
 }
 
 .label {
