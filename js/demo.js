@@ -13,7 +13,7 @@ var hash = new L.Hash(map);
 new L.Control.Zoom({ position: 'topright' }).addTo(map);
 L.control.locate({ position: 'topright', keepCurrentZoomLevel: true }).addTo(map);
 L.control.locations({ position: 'topright', keepCurrentZoomLevel: true }).addTo(map);
-L.control.styles({ position: 'topright', keepCurrentZoomLevel: true }).addTo(map);
+L.control.styles({ scene: layer.scene }).addTo(map);
 
 // add pelias geocoder control
 L.control.geocoder({ position: 'topright' }).addTo(map);
