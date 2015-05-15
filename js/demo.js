@@ -231,7 +231,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   $scope.geobiasClass = 'fa-th';
   $scope.geobiasInfo = 'the view port/ bounding box';
   $scope.searchType = 'fine';
-  $scope.api_url = '//pelias.mapzen.com';
+  $scope.api_url = '//pelias.stage.mapzen.com';
 
   $scope.switchType = function(type) {
     $scope.searchType = type === 'fine' ? 'coarse' : 'fine';
