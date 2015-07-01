@@ -18,6 +18,25 @@ L.control.styles({ position: 'topright', scene: layer.scene }).addTo(map);
 // add pelias geocoder control
 L.control.geocoder({ position: 'topright' }).addTo(map);
 
+// add valhalla routing control
+// var rr = L.Routing.control({
+//   // you can get api key from Mapzen developer (https://mapzen.com/developers)
+//   router: L.Routing.valhalla('valhalla-j5geTgQ','auto'),
+//   formatter: new L.Routing.Valhalla.Formatter()
+// }).addTo(map);
+
+L.Routing.control({
+  waypoints: [
+    L.latLng(57.74, 11.94),
+    L.latLng(57.6792, 11.949)
+  ],
+  // you can get valhalla api key at https://mapzen.com/developers
+  router: L.Routing.valhalla('valhalla-j5geTgQ','auto'),
+  formatter: new L.Routing.Valhalla.Formatter(),
+  summaryTemplate:'<div class="start">{name}</div><div class="info {transitmode}">{distance}, {time}</div>',
+  routeWhileDragging: false
+}).addTo(map);
+
 // add mapzen bug
 var mzBug = new MapzenBug({
   name: 'Pelias Demo using Tangram',
