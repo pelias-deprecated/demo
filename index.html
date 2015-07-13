@@ -32,7 +32,7 @@
       <section id="searchbar" data-ng-controller="SearchController">
         <form role="search">
           <div class="input">
-            <input type="text" data-ng-model="search" class="form-control" ng-focus="onFocus($event)" ng-blur="onBlur($event)" ng-keydown="keyPressed($event)" placeholder="Search" />
+            <input type="text" data-ng-model="search" class="form-control" ng-focus="onFocus($event)" ng-blur="onBlur($event)" ng-keydown="keyPressed($event)" ng-model-options="{ debounce: 100 }" placeholder="Search" />
             <div class="aside geobias-{{geobias}}">
               <a data-ng-click="switchGeobias(geobias)" data-toggle="tooltip" title="click to toggle between sending lat-lon, bbox and nothing. Right now you are sending {{geobiasInfo}}.">
                 <span class="fa geobias-class {{geobiasClass}}"></span>
