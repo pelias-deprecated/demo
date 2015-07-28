@@ -22,6 +22,7 @@ app.controller('SearchController', function($scope, $rootScope, $sce, $http) {
   var map = L.map('map', {
       zoom: $rootScope.geobase.zoom,
       zoomControl: false,
+      worldCopyJump: true,
       center: [$rootScope.geobase.lat, $rootScope.geobase.lon]
   });
 
