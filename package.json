@@ -1,0 +1,48 @@
+{
+  "name": "demo",
+  "version": "2.0.0",
+  "description": "pelias demo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pelias/demo.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pelias/demo/issues"
+  },
+  "homepage": "https://github.com/pelias/demo#readme",
+  "dependencies": {
+    "drmonty-leaflet-awesome-markers": "^2.0.2",
+    "leaflet": "1.0.0-beta.2",
+    "leaflet-geocoder-mapzen": "1.6.2",
+    "leaflet-hash": "0.2.1",
+    "leaflet.locatecontrol": "0.52.0",
+    "whatwg-fetch": "1.0.0"
+  },
+  "devDependencies": {
+    "browserify": "13.0.1",
+    "browserify-shim": "3.8.12",
+    "gulp": "3.9.1",
+    "gulp-cssimport": "3.0.2",
+    "gulp-cssnano": "2.1.2",
+    "gulp-rename": "1.2.2",
+    "gulp-sourcemaps": "1.6.0",
+    "gulp-uglify": "1.5.3",
+    "gulp-util": "3.0.7",
+    "vinyl-buffer": "1.0.0",
+    "vinyl-source-stream": "1.1.0"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "tangram": "global:Tangram"
+  }
+}
