@@ -6,3 +6,7 @@ This is a simple webpage that uses mapzen's pelias api (https://pelias.mapzen.co
 * /search
 * /autocomplete
 * /reverse
+
+## Setup
+
+run `sh server.sh` and point your browser at http://localhost:8080
